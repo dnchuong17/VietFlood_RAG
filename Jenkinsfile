@@ -34,6 +34,7 @@ pipeline {
           set -eu
           test -f "$ENV_FILE" || { echo "Missing deployment env file: $ENV_FILE"; exit 1; }
           grep -q '^RAG_SERVICE_TOKEN=.' "$ENV_FILE" || { echo "RAG_SERVICE_TOKEN is required in $ENV_FILE"; exit 1; }
+          grep -q '^OPENAI_API_KEY=.' "$ENV_FILE" || { echo "OPENAI_API_KEY is required in $ENV_FILE"; exit 1; }
           grep -q '^QDRANT_URL=.' "$ENV_FILE" || { echo "QDRANT_URL is required in $ENV_FILE"; exit 1; }
         '''
       }
@@ -52,6 +53,16 @@ pipeline {
               -t "$IMAGE_NAME:latest" .
           '''
         }
+      }
+    }
+
+    stage('Check embedding provider') {
+      steps {
+        sh '''
+          set +x
+          set -eu
+          docker run --rm --env-file "$ENV_FILE" --entrypoint python "$IMAGE_NAME:$BUILD_NUMBER" /app/check_embedding_runtime.py
+        '''
       }
     }
 

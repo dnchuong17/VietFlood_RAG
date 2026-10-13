@@ -6,15 +6,18 @@ from urllib.parse import urlparse
 from fastapi import FastAPI,HTTPException,Header,Depends
 from pydantic import BaseModel,Field
 from qdrant_client import QdrantClient,models
-from pipeline_config import QDRANT_URL,QDRANT_API_KEY,RAG_ALIAS,RAG_DATA_DIR,EMBEDDING_MODEL,RERANK_MODEL,EMBEDDING_QUERY_PREFIX
-from rag_models import dense_model,dense_model_revision,sparse_model,rerank_model,encode_dense
+from pipeline_config import QDRANT_URL,QDRANT_API_KEY,RAG_ALIAS,RAG_DATA_DIR,EMBEDDING_MODEL,RERANK_MODEL,EMBEDDING_QUERY_PREFIX,EMBEDDING_DIMENSIONS
+from rag_models import dense_model,sparse_model,rerank_model,encode_dense,embedding_identity,embedding_fingerprint,validate_embedding_configuration
 logger=logging.getLogger('vietflood.retrieval')
 client=QdrantClient(url=QDRANT_URL,api_key=QDRANT_API_KEY,timeout=10)
 model_lock=threading.Lock()
 
 def safe_error(exc):
+    # Provider exceptions may contain private request/response bodies.
+    if type(exc).__module__.startswith(('openai','httpx','httpcore')):
+        return type(exc).__name__
     message=str(exc)
-    for secret in (QDRANT_API_KEY,os.getenv('RAG_SERVICE_TOKEN','')):
+    for secret in (QDRANT_API_KEY,os.getenv('RAG_SERVICE_TOKEN',''),os.getenv('OPENAI_API_KEY','')):
         if secret: message=message.replace(secret,'[redacted]')
     return message[:500]
 
@@ -26,18 +29,18 @@ def authorization(x_rag_token:str=Header(default='')):
 def readiness():
     info=client.get_collection(RAG_ALIAS)
     vectors=info.config.params.vectors
-    if not isinstance(vectors,dict) or 'dense' not in vectors or vectors['dense'].size!=768 or vectors['dense'].distance!=models.Distance.COSINE or 'bm25' not in (info.config.params.sparse_vectors or {}): raise ValueError('Incompatible vector schema')
+    if not isinstance(vectors,dict) or 'dense' not in vectors or vectors['dense'].size!=EMBEDDING_DIMENSIONS or vectors['dense'].distance!=models.Distance.COSINE or 'bm25' not in (info.config.params.sparse_vectors or {}): raise ValueError('Incompatible vector schema')
     aliases={a.alias_name:a.collection_name for a in client.get_aliases().aliases}
     actual=aliases.get(RAG_ALIAS,RAG_ALIAS)
     manifest=json.loads((RAG_DATA_DIR/'releases'/(actual+'.json')).read_text())
-    revision=dense_model_revision()
+    validate_embedding_configuration()
     if manifest['embedding_model']!=EMBEDDING_MODEL:
         raise ValueError(f"Embedding model mismatch: manifest={manifest['embedding_model']}, loaded={EMBEDDING_MODEL}")
-    if manifest['model_revision']!=revision:
-        raise ValueError(f"Model revision mismatch: manifest={manifest['model_revision']}, loaded={revision}")
+    if any(manifest.get(k)!=v for k,v in embedding_identity().items()) or manifest.get('model_fingerprint')!=embedding_fingerprint():
+        raise ValueError('Embedding identity/fingerprint mismatch')
     count=client.count(actual,exact=True).count
     if count!=manifest['point_count']: raise ValueError('Manifest/collection count mismatch')
-    return {'status':'ready','alias':RAG_ALIAS,'collection':actual,'pointCount':count,'embeddingModel':EMBEDDING_MODEL,'modelRevision':revision,'reranker':RERANK_MODEL,'vectorSize':768}
+    return {'status':'ready','alias':RAG_ALIAS,'collection':actual,'pointCount':count,'embeddingModel':EMBEDDING_MODEL,'modelRevision':None,'reranker':RERANK_MODEL,'vectorSize':EMBEDDING_DIMENSIONS}
 
 @asynccontextmanager
 async def lifespan(app):

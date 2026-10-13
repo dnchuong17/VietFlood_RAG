@@ -1,25 +1,16 @@
-"""Token-budgeted Markdown chunks; all budgets include the full E5 input."""
+"""Token-budgeted Markdown chunks; budgets include title and section heading."""
 from __future__ import annotations
 import argparse
 import re
 import unicodedata
 import uuid
-from functools import lru_cache
 from kb_common import read_jsonl, sha256_text, write_jsonl
-from pipeline_config import CHUNKS_PATH, PARSED_DOCUMENTS_PATH, EMBEDDING_MODEL, EMBEDDING_DOCUMENT_PREFIX
-from rag_models import dense_model_revision
-
-@lru_cache(maxsize=1)
-def get_tokenizer():
-    from transformers import AutoTokenizer
-    return AutoTokenizer.from_pretrained(EMBEDDING_MODEL, revision=dense_model_revision())
-
-def token_count(text, tokenizer=None):
-    return len((tokenizer or get_tokenizer()).encode(text, add_special_tokens=True, truncation=False))
+from pipeline_config import CHUNKS_PATH, PARSED_DOCUMENTS_PATH, EMBEDDING_DOCUMENT_PREFIX, EMBEDDING_MAX_TOKENS
+from rag_models import get_tokenizer, token_count
 
 def chunk_document(document, max_tokens=450, overlap_tokens=50, tokenizer=None):
     tok = tokenizer or get_tokenizer()
-    hard = min(512, tok.model_max_length)
+    hard = EMBEDDING_MAX_TOKENS
     budget = min(max_tokens, hard)
     chunks=[]
     for section in document['sections']:
@@ -85,5 +76,5 @@ def main():
     if not 100<=args.max_tokens<=512 or not 0<=args.overlap_tokens<args.max_tokens: parser.error('Invalid token budget')
     chunks=[chunk for doc in read_jsonl(args.input) for chunk in chunk_document(doc,args.max_tokens,args.overlap_tokens)]
     write_jsonl(args.output,chunks)
-    print(f"Built {len(chunks)} chunks; maximum actual E5 tokens: {max((c['token_count'] for c in chunks),default=0)}")
+    print(f"Built {len(chunks)} chunks; maximum cl100k_base tokens: {max((c['token_count'] for c in chunks),default=0)}")
 if __name__=='__main__': main()

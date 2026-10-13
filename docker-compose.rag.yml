@@ -9,6 +9,10 @@ services:
       QDRANT_URL: ${QDRANT_URL:-https://qdrant.ndtd.indevs.in:443}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
       QDRANT_CHAT_COLLECTION: ${QDRANT_CHAT_COLLECTION:-flood_kb_active}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?Set the embedding API key}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://cheapkeyai.shop/v1}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-3-small}
+      EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-1536}
       RAG_SERVICE_TOKEN: ${RAG_SERVICE_TOKEN:?Set the shared retrieval token}
     volumes:
       - ./data:/app/data:ro

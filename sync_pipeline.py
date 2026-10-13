@@ -9,6 +9,11 @@ from chunk_documents import chunk_document
 from ingest_qdrant import synchronize
 
 def main():
+    # Publishing a prepared release must not regenerate the corpus.
+    if '--publish-release' in sys.argv:
+        from ingest_qdrant import main as publish
+        publish()
+        return
     RAG_DATA_DIR.mkdir(parents=True,exist_ok=True)
     with FileLock(str(RAG_DATA_DIR/'sync.lock'),timeout=120):
         registry=build_registry(MARKDOWN_DIR); write_jsonl(SOURCE_REGISTRY_PATH,registry)

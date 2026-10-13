@@ -12,7 +12,7 @@ _env_file = PROJECT_ROOT / ".env"
 if _env_file.exists():
     for _line in _env_file.read_text().splitlines():
         _key, _sep, _value = _line.partition("=")
-        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_MODEL_REVISION", "RERANK_MODEL"}:
+        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_DIMENSIONS", "OPENAI_BASE_URL", "OPENAI_API_KEY", "RERANK_MODEL", "HF_HOME"}:
             os.environ.setdefault(_key.strip(), _value.strip().strip("\"'"))
 MARKDOWN_DIR = PROJECT_ROOT / "rag_sources" / "markdown"
 DATA_DIR = Path(os.getenv("RAG_DATA_DIR", str(PROJECT_ROOT / "data")))
@@ -29,20 +29,15 @@ PARSED_DOCUMENTS_PATH = DATA_DIR / "parsed_documents.jsonl"
 CHUNKS_PATH = DATA_DIR / "chunks.jsonl"
 INGEST_MANIFEST_PATH = DATA_DIR / "ingest_manifest.json"
 
-# Selected baseline: multilingual, supports Vietnamese and English, modest enough
-# for a local thesis prototype. E5 requires passage/query prefixes.
-EMBEDDING_MODEL = os.getenv(
-    "EMBEDDING_MODEL", "intfloat/multilingual-e5-base"
-)
-# Match the immutable E5 revision used by the bundled corpus release.
-# Other models resolve their main branch unless a revision is explicitly supplied.
-EMBEDDING_MODEL_REVISION = os.getenv(
-    "EMBEDDING_MODEL_REVISION",
-    "d128750597153bb5987e10b1c3493a34e5a4502a"
-    if EMBEDDING_MODEL == "intfloat/multilingual-e5-base" else "main",
-)
-EMBEDDING_DOCUMENT_PREFIX = "passage: "
-EMBEDDING_QUERY_PREFIX = "query: "
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://cheapkeyai.shop/v1").strip().rstrip("/")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small").strip()
+EMBEDDING_DIMENSIONS = int(os.getenv("EMBEDDING_DIMENSIONS", "1536"))
+EMBEDDING_TOKENIZER = "cl100k_base"
+EMBEDDING_MAX_TOKENS = 8191
+EMBEDDING_DOCUMENT_PREFIX = ""
+EMBEDDING_QUERY_PREFIX = ""
+PIPELINE_VERSION = "rag-v3-api-cl100k450-bm25-nostem-256"
 
 QDRANT_URL = os.getenv(
     "QDRANT_URL", "https://qdrant.ndtd.indevs.in:443"

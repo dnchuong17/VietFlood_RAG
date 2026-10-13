@@ -1,4 +1,4 @@
-"""Integrity and token-boundary checks against the actual E5 tokenizer/artifacts."""
+"""Integrity and token-boundary checks against the actual cl100k_base tokenizer/artifacts."""
 import json,unittest
 from kb_common import read_jsonl
 from pipeline_config import CHUNKS_PATH,PARSED_DOCUMENTS_PATH,SOURCE_REGISTRY_PATH,EMBEDDING_DOCUMENT_PREFIX

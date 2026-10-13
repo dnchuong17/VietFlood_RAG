@@ -9,3 +9,5 @@ python-multipart>=0.0.9,<1
 
 fastembed>=0.7,<1
 filelock>=3,<4
+openai>=1.93,<3
+tiktoken>=0.9,<1

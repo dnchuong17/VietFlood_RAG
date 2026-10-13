@@ -9,3 +9,5 @@ qdrant_local/
 data/parsed_documents.jsonl
 data/chunks.jsonl
 data/ingest_manifest.json
+data/embedding_cache/
+data/*.lock

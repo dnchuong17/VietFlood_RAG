@@ -1,101 +1,87 @@
-"""Regression checks for model revision resolution and authenticated readiness."""
+"""Authenticated readiness and API embedding identity checks."""
 import importlib
 import json
 import os
 from pathlib import Path
-import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
-
 from fastapi.testclient import TestClient
 from qdrant_client import models
-import rag_models
-import chunk_documents
+from rag_models import embedding_identity, embedding_fingerprint
 
 
 class RetrievalReadinessTests(unittest.TestCase):
     def setUp(self):
-        rag_models.dense_model.cache_clear()
-        rag_models.dense_model_revision.cache_clear()
-        chunk_documents.get_tokenizer.cache_clear()
-        self.addCleanup(rag_models.dense_model.cache_clear)
-        self.addCleanup(rag_models.dense_model_revision.cache_clear)
-        self.addCleanup(chunk_documents.get_tokenizer.cache_clear)
+        key = patch('rag_models.OPENAI_API_KEY', 'test-key')
+        key.start()
+        self.addCleanup(key.stop)
         with patch('qdrant_client.QdrantClient'):
-            self.service=importlib.import_module('retrieval_service')
-        self.revision='d128750597153bb5987e10b1c3493a34e5a4502a'
-        self.collection='test_release'
-        self.manifest={'embedding_model':self.service.EMBEDDING_MODEL,
-                       'model_revision':self.revision,'point_count':212}
-        temporary=tempfile.TemporaryDirectory()
+            self.service = importlib.import_module('retrieval_service')
+        self.manifest = {**embedding_identity(), 'model_fingerprint': embedding_fingerprint(), 'point_count': 212}
+        temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
-        self.data=Path(temporary.name)
-        (self.data/'releases').mkdir()
+        self.data = Path(temporary.name)
+        (self.data / 'releases').mkdir()
         self.write_manifest()
-        params=SimpleNamespace(
-            vectors={'dense':SimpleNamespace(size=768,distance=models.Distance.COSINE)},
-            sparse_vectors={'bm25':object()},
-        )
-        client=Mock()
-        client.get_collection.return_value=SimpleNamespace(config=SimpleNamespace(params=params))
-        client.get_aliases.return_value=SimpleNamespace(aliases=[SimpleNamespace(
-            alias_name=self.service.RAG_ALIAS,collection_name=self.collection)])
-        client.count.return_value=SimpleNamespace(count=212)
-        for attribute,value in [('client',client),('RAG_DATA_DIR',self.data)]:
-            patcher=patch.object(self.service,attribute,value)
+        self.params = SimpleNamespace(vectors={'dense': SimpleNamespace(size=1536, distance=models.Distance.COSINE)}, sparse_vectors={'bm25': object()})
+        self.client = Mock()
+        self.client.get_collection.return_value = SimpleNamespace(config=SimpleNamespace(params=self.params))
+        self.client.get_aliases.return_value = SimpleNamespace(aliases=[SimpleNamespace(alias_name=self.service.RAG_ALIAS, collection_name='test_release')])
+        self.client.count.return_value = SimpleNamespace(count=212)
+        for attribute, value in [('client', self.client), ('RAG_DATA_DIR', self.data)]:
+            patcher = patch.object(self.service, attribute, value)
             patcher.start()
             self.addCleanup(patcher.stop)
-        patcher=patch('huggingface_hub.hf_hub_download',return_value=
-                      f'/cache/models--intfloat--multilingual-e5-base/snapshots/{self.revision}/config.json')
-        self.download=patcher.start()
-        self.addCleanup(patcher.stop)
 
     def write_manifest(self):
-        (self.data/'releases'/f'{self.collection}.json').write_text(json.dumps(self.manifest))
+        (self.data / 'releases' / 'test_release.json').write_text(json.dumps(self.manifest))
 
-    def test_model_loads_the_resolved_commit(self):
-        constructor=Mock(return_value=SimpleNamespace())
-        with patch.dict(sys.modules,{'sentence_transformers':SimpleNamespace(SentenceTransformer=constructor)}):
-            rag_models.dense_model()
-        constructor.assert_called_once_with(self.service.EMBEDDING_MODEL,revision=self.revision)
-        self.download.assert_called_once_with(repo_id=self.service.EMBEDDING_MODEL,
-                                              filename='config.json',
-                                              revision=rag_models.EMBEDDING_MODEL_REVISION)
-
-    def test_startup_and_health_work_without_private_commit_metadata(self):
-        # Deliberately omit both tokenizer and model config _commit_hash fields.
-        embedder=SimpleNamespace(tokenizer=SimpleNamespace(init_kwargs={}),
-                                 auto_model=SimpleNamespace(config=SimpleNamespace()))
-        with patch.object(self.service,'dense_model',return_value=embedder), \
-             patch.object(self.service,'sparse_model',return_value=object()), \
-             patch.object(self.service,'rerank_model',return_value=object()), \
-             patch.dict(os.environ,{'RAG_SERVICE_TOKEN':'test-token'}):
+    def test_startup_and_authenticated_health_report_api_embeddings(self):
+        with patch.object(self.service, 'dense_model', return_value=object()), \
+             patch.object(self.service, 'sparse_model', return_value=object()), \
+             patch.object(self.service, 'rerank_model', return_value=object()), \
+             patch.dict(os.environ, {'RAG_SERVICE_TOKEN': 'test-token'}):
             with TestClient(self.service.app) as http:
-                response=http.get('/health/ready',headers={'x-rag-token':'test-token'})
-                self.assertEqual(response.status_code,200,response.text)
-                self.assertEqual(response.json()['modelRevision'],self.revision)
-                self.assertEqual(http.get('/health/ready').status_code,401)
+                response = http.get('/health/ready', headers={'x-rag-token': 'test-token'})
+                self.assertEqual(response.status_code, 200, response.text)
+                self.assertEqual(response.json()['vectorSize'], 1536)
+                self.assertIsNone(response.json()['modelRevision'])
+                self.assertEqual(http.get('/health/ready').status_code, 401)
 
-    def test_chunk_tokenizer_uses_the_same_commit(self):
-        constructor=Mock()
-        with patch.dict(sys.modules,{'transformers':SimpleNamespace(AutoTokenizer=constructor)}):
-            chunk_documents.get_tokenizer()
-        constructor.from_pretrained.assert_called_once_with(self.service.EMBEDDING_MODEL,
-                                                            revision=self.revision)
+    def test_wrong_model_endpoint_tokenizer_and_fingerprint_remain_unhealthy(self):
+        for key in ['embedding_model', 'embedding_base_url', 'tokenizer', 'model_fingerprint']:
+            with self.subTest(key=key):
+                self.manifest[key] = 'incorrect'
+                self.write_manifest()
+                with self.assertRaises(ValueError):
+                    self.service.readiness()
+                self.manifest = {**embedding_identity(), 'model_fingerprint': embedding_fingerprint(), 'point_count': 212}
 
-    def test_an_actual_revision_mismatch_remains_unhealthy(self):
-        self.manifest['model_revision']='b'*40
-        self.write_manifest()
-        with self.assertRaisesRegex(ValueError,'Model revision mismatch: manifest=b+, loaded=d128'):
+    def test_old_768_vector_schema_is_rejected(self):
+        self.params.vectors['dense'].size = 768
+        with self.assertRaisesRegex(ValueError, 'vector schema'):
             self.service.readiness()
 
-    def test_unresolved_snapshot_path_is_rejected(self):
-        self.download.return_value='/cache/config.json'
-        with self.assertRaisesRegex(ValueError,'Cannot resolve embedding model commit'):
-            rag_models.dense_model_revision()
+    def test_collection_count_mismatch_is_rejected(self):
+        self.client.count.return_value.count = 1
+        with self.assertRaisesRegex(ValueError, 'count mismatch'):
+            self.service.readiness()
+
+    def test_missing_credentials_are_unhealthy(self):
+        with patch('rag_models.OPENAI_API_KEY', ''):
+            with self.assertRaisesRegex(ValueError, 'Missing OPENAI_API_KEY'):
+                self.service.readiness()
+
+    def test_provider_errors_and_credentials_are_redacted(self):
+        from openai import APIConnectionError
+        import httpx
+        error = APIConnectionError(message='private provider body', request=httpx.Request('GET', 'https://example.test'))
+        self.assertEqual(self.service.safe_error(error), 'APIConnectionError')
+        with patch.dict(os.environ, {'OPENAI_API_KEY': 'private-key'}):
+            self.assertNotIn('private-key', self.service.safe_error(ValueError('bad private-key')))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     unittest.main()
