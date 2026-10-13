@@ -9,7 +9,7 @@ pipeline {
   }
 
   environment {
-    APP_DIR = 'VietFlood'
+    APP_DIR = '.'
     IMAGE_NAME = 'vietflood-retrieval'
     CONTAINER_NAME = 'rag-retrieval'
     HOST_PORT = '8001'
