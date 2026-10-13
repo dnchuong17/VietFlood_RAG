@@ -30,7 +30,11 @@ def readiness():
     aliases={a.alias_name:a.collection_name for a in client.get_aliases().aliases}
     actual=aliases.get(RAG_ALIAS,RAG_ALIAS)
     manifest=json.loads((RAG_DATA_DIR/'releases'/(actual+'.json')).read_text())
-    revision=dense_model()[0].auto_model.config._commit_hash
+    embedder=dense_model()
+    revision=getattr(embedder.tokenizer,'init_kwargs',{}).get('_commit_hash') or 'unresolved'
+    if revision=='unresolved':
+        config=getattr(getattr(embedder[0],'auto_model',None),'config',None)
+        revision=getattr(config,'_commit_hash',None) or EMBEDDING_MODEL
     if manifest['embedding_model']!=EMBEDDING_MODEL or manifest['model_revision']!=revision: raise ValueError('Model revision mismatch')
     count=client.count(actual,exact=True).count
     if count!=manifest['point_count']: raise ValueError('Manifest/collection count mismatch')
