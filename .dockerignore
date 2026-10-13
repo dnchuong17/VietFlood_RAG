@@ -9,6 +9,10 @@ venv/
 .git/
 .idea/
 .vscode/
-data/
+data/*
+!data/releases/
+!data/releases/**
+!data/snapshots/
+!data/snapshots/**
 rag_sources/
 *.log

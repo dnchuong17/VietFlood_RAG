@@ -17,6 +17,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=app:app *.py ./
+COPY --chown=app:app data/releases data/snapshots /app/data/
 
 USER app
 EXPOSE 8001

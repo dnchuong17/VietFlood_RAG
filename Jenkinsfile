@@ -17,7 +17,6 @@ pipeline {
     ENV_FILE = '/opt/env/vietflood-rag.env'
     RAG_NETWORK = 'jenkins_default'
     MODEL_VOLUME = 'vietflood-rag-models'
-    RAG_CORPUS_DIR = "${WORKSPACE}/data"
   }
 
   stages {
@@ -34,7 +33,6 @@ pipeline {
           set +x
           set -eu
           test -f "$ENV_FILE" || { echo "Missing deployment env file: $ENV_FILE"; exit 1; }
-          test -d "$RAG_CORPUS_DIR" || { echo "Set RAG_CORPUS_DIR to the prepared RAG data directory on the Jenkins host."; exit 1; }
           grep -q '^RAG_SERVICE_TOKEN=.' "$ENV_FILE" || { echo "RAG_SERVICE_TOKEN is required in $ENV_FILE"; exit 1; }
           grep -q '^QDRANT_URL=.' "$ENV_FILE" || { echo "QDRANT_URL is required in $ENV_FILE"; exit 1; }
         '''
@@ -77,7 +75,6 @@ pipeline {
             --env RAG_DATA_DIR=/app/data \
             --env HF_HOME=/models/huggingface \
             --env FASTEMBED_CACHE_PATH=/models/fastembed \
-            --mount "type=bind,src=$RAG_CORPUS_DIR,dst=/app/data,readonly" \
             --mount "type=volume,src=$MODEL_VOLUME,dst=/models" \
             "$IMAGE_NAME:$BUILD_NUMBER"
 
