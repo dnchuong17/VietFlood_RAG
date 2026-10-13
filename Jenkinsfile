@@ -17,7 +17,7 @@ pipeline {
     ENV_FILE = '/opt/env/vietflood-rag.env'
     RAG_NETWORK = 'jenkins_default'
     MODEL_VOLUME = 'vietflood-rag-models'
-    RAG_CORPUS_DIR = '/opt/vietflood/rag-data'
+    RAG_CORPUS_DIR = "${WORKSPACE}/data"
   }
 
   stages {
