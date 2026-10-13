@@ -1,0 +1,15 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: vietflood-qdrant
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - vietflood_qdrant_storage:/qdrant/storage
+
+volumes:
+  vietflood_qdrant_storage:
+    name: vietflood_qdrant_storage
+
