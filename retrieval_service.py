@@ -12,6 +12,12 @@ logger=logging.getLogger('vietflood.retrieval')
 client=QdrantClient(url=QDRANT_URL,api_key=QDRANT_API_KEY,timeout=10)
 model_lock=threading.Lock()
 
+def safe_error(exc):
+    message=str(exc)
+    for secret in (QDRANT_API_KEY,os.getenv('RAG_SERVICE_TOKEN','')):
+        if secret: message=message.replace(secret,'[redacted]')
+    return message[:500]
+
 def authorization(x_rag_token:str=Header(default='')):
     import secrets
     token=os.getenv('RAG_SERVICE_TOKEN','')
@@ -38,7 +44,7 @@ async def lifespan(app):
         app.state.models_ready=True
     except Exception as exc:
         app.state.models_ready=False
-        logger.error(json.dumps({'event':'retrieval_startup_failed','errorType':type(exc).__name__,'httpStatus':getattr(exc,'status_code',None)}))
+        logger.error(json.dumps({'event':'retrieval_startup_failed','errorType':type(exc).__name__,'httpStatus':getattr(exc,'status_code',None),'error':safe_error(exc)}))
     yield
     client.close()
 app=FastAPI(title='VietFlood Retrieval',lifespan=lifespan,dependencies=[Depends(authorization)])
@@ -55,7 +61,7 @@ def health():
         if not getattr(app.state,'models_ready',False): raise ValueError('Models are not loaded')
         return readiness()
     except Exception as exc:
-        logger.error(json.dumps({'event':'readiness_failed','errorType':type(exc).__name__,'httpStatus':getattr(exc,'status_code',None)}))
+        logger.error(json.dumps({'event':'readiness_failed','errorType':type(exc).__name__,'httpStatus':getattr(exc,'status_code',None),'error':safe_error(exc)}))
         raise HTTPException(503,'Retrieval is not ready')
 
 @app.post('/search')
