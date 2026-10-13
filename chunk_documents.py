@@ -7,11 +7,12 @@ import uuid
 from functools import lru_cache
 from kb_common import read_jsonl, sha256_text, write_jsonl
 from pipeline_config import CHUNKS_PATH, PARSED_DOCUMENTS_PATH, EMBEDDING_MODEL, EMBEDDING_DOCUMENT_PREFIX
+from rag_models import dense_model_revision
 
 @lru_cache(maxsize=1)
 def get_tokenizer():
     from transformers import AutoTokenizer
-    return AutoTokenizer.from_pretrained(EMBEDDING_MODEL)
+    return AutoTokenizer.from_pretrained(EMBEDDING_MODEL, revision=dense_model_revision())
 
 def token_count(text, tokenizer=None):
     return len((tokenizer or get_tokenizer()).encode(text, add_special_tokens=True, truncation=False))

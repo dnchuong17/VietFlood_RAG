@@ -6,7 +6,7 @@ from pathlib import Path
 from qdrant_client import QdrantClient,models
 from kb_common import read_jsonl,sha256_text
 from pipeline_config import CHUNKS_PATH,PARSED_DOCUMENTS_PATH,EMBEDDING_MODEL,EMBEDDING_DOCUMENT_PREFIX,QDRANT_URL,QDRANT_API_KEY,RAG_ALIAS,RAG_DATA_DIR,INGEST_MANIFEST_PATH
-from rag_models import encode_dense,sparse_model
+from rag_models import encode_dense,sparse_model,dense_model_revision
 
 PIPELINE_VERSION='rag-v2-tokenizer450-bm25-nostem-256'
 
@@ -45,10 +45,8 @@ def synchronize():
     cache_dir=RAG_DATA_DIR/'embedding_cache'; cache_dir.mkdir(parents=True,exist_ok=True)
     # Cache keys include the resolved tokenizer/model revision, not just dimensions.
     from rag_models import dense_model
-    embedder=dense_model()
-    revision=getattr(embedder.tokenizer,'init_kwargs',{}).get('_commit_hash') or 'unresolved'
-    if revision=='unresolved':
-        revision=getattr(embedder[0].auto_model.config,'_commit_hash',None) or EMBEDDING_MODEL
+    dense_model()
+    revision=dense_model_revision()
     fingerprint=sha256_text(EMBEDDING_MODEL+str(revision)+PIPELINE_VERSION)
     if previous.get('corpus_hash')==source_hash and previous.get('model_fingerprint')==fingerprint and aliases.get(args.collection)==previous.get('collection'):
         print(json.dumps({'status':'unchanged','collection':previous['collection'],'point_count':len(chunks)})); client.close(); return

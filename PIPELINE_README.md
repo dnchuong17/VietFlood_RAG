@@ -13,6 +13,8 @@ python -m uvicorn retrieval_service:app --host 127.0.0.1 --port 8001
 
 The shared private token RAG_SERVICE_TOKEN must match API Gateway. QDRANT_CHAT_COLLECTION defaults to flood_kb_active. Runtime retrieval uses dense E5 + BM25 sparse Query API / RRF / multilingual BGE reranking, without scroll or match.text.
 
+The default E5 embedding model is pinned to commit `d128750597153bb5987e10b1c3493a34e5a4502a`, matching the bundled release manifest. `EMBEDDING_MODEL_REVISION` can select another commit for a newly ingested release; deploying it also requires the matching collection and manifest. Ingest and retrieval resolve the loaded commit from the Hugging Face snapshot cache and reject a revision mismatch.
+
 Use `Dockerfile.rag` to build vietflood-retrieval:local, and `docker-compose.rag.yml` for standalone local service. Backend Docker Compose uses that image with a read-only mounted data directory and persistent model cache. Source snapshots/releases must be deployed with the collection, not just embeddings.
 
 The new local artifacts contain 34 documents and 212 section-aware chunks. Token budgets include E5 prefix/title/heading/special tokens; no input may exceed the hard model ceiling. Manifests report full desired collection counts, model/tokenizer fingerprint, additions/deletions/cache reuse and previous collection.

@@ -1,11 +1,26 @@
 """Shared, lazy models and encoders for ingestion and production retrieval."""
 from functools import lru_cache
-from pipeline_config import EMBEDDING_MODEL, RERANK_MODEL
+from pathlib import Path
+import re
+from pipeline_config import EMBEDDING_MODEL, EMBEDDING_MODEL_REVISION, RERANK_MODEL
+
+@lru_cache(maxsize=1)
+def dense_model_revision():
+    from huggingface_hub import hf_hub_download
+    config_path=Path(hf_hub_download(
+        repo_id=EMBEDDING_MODEL, filename='config.json', revision=EMBEDDING_MODEL_REVISION,
+    ))
+    # Hub cache paths identify the actual commit; Transformers' private
+    # _commit_hash attributes are not available in every supported version.
+    revision=config_path.parent.name
+    if config_path.parent.parent.name!='snapshots' or not re.fullmatch(r'[0-9a-f]{40}',revision):
+        raise ValueError('Cannot resolve embedding model commit from Hub cache')
+    return revision
 
 @lru_cache(maxsize=1)
 def dense_model():
     from sentence_transformers import SentenceTransformer
-    return SentenceTransformer(EMBEDDING_MODEL)
+    return SentenceTransformer(EMBEDDING_MODEL, revision=dense_model_revision())
 
 @lru_cache(maxsize=1)
 def sparse_model():

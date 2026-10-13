@@ -12,7 +12,7 @@ _env_file = PROJECT_ROOT / ".env"
 if _env_file.exists():
     for _line in _env_file.read_text().splitlines():
         _key, _sep, _value = _line.partition("=")
-        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_DATA_DIR", "EMBEDDING_MODEL", "RERANK_MODEL"}:
+        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_MODEL_REVISION", "RERANK_MODEL"}:
             os.environ.setdefault(_key.strip(), _value.strip().strip("\"'"))
 MARKDOWN_DIR = PROJECT_ROOT / "rag_sources" / "markdown"
 DATA_DIR = Path(os.getenv("RAG_DATA_DIR", str(PROJECT_ROOT / "data")))
@@ -33,6 +33,13 @@ INGEST_MANIFEST_PATH = DATA_DIR / "ingest_manifest.json"
 # for a local thesis prototype. E5 requires passage/query prefixes.
 EMBEDDING_MODEL = os.getenv(
     "EMBEDDING_MODEL", "intfloat/multilingual-e5-base"
+)
+# Match the immutable E5 revision used by the bundled corpus release.
+# Other models resolve their main branch unless a revision is explicitly supplied.
+EMBEDDING_MODEL_REVISION = os.getenv(
+    "EMBEDDING_MODEL_REVISION",
+    "d128750597153bb5987e10b1c3493a34e5a4502a"
+    if EMBEDDING_MODEL == "intfloat/multilingual-e5-base" else "main",
 )
 EMBEDDING_DOCUMENT_PREFIX = "passage: "
 EMBEDDING_QUERY_PREFIX = "query: "
