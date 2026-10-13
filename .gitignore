@@ -1,0 +1,11 @@
+.venv/
+.venv-macos/
+__pycache__/
+*.py[cod]
+.env
+.model_cache/
+qdrant_storage/
+qdrant_local/
+data/parsed_documents.jsonl
+data/chunks.jsonl
+data/ingest_manifest.json

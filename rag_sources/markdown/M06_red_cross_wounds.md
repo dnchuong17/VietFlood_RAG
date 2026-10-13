@@ -1,0 +1,48 @@
+---
+source_ids: [M06]
+title: American Red Cross — Wounds
+source_url: https://www.redcross.org/take-a-class/resources/learn-first-aid/wounds
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+---
+
+# Vết thương
+
+Vết thương có thể kín hoặc hở. Vết hở gồm trầy xước, rách, đâm xuyên và lóc da; mức độ nguy hiểm phụ thuộc vị trí, độ sâu, chảy máu, dị vật và cơ chế gây thương tích.
+
+Trước tiên kiểm tra an toàn, tình trạng đáp ứng, hô hấp và chảy máu đe dọa tính mạng. Gọi trợ giúp khẩn cấp khi chảy máu không kiểm soát, vết sâu/rộng, dị vật cắm, tổn thương đầu-ngực-bụng, dấu hiệu sốc hoặc suy giảm ý thức. Kiểm soát chảy máu bằng ép trực tiếp; không tự rút vật cắm sâu.
+
+Với vết nhẹ, rửa tay, làm sạch bằng nước sạch, che bằng băng vô khuẩn và theo dõi đỏ, sưng, đau tăng, mủ hoặc sốt. Cần đánh giá y tế khi có nguy cơ nhiễm trùng, vết cắn hoặc cần tiêm phòng uốn ván.
+
+## Phân loại theo cơ chế
+
+Trầy xước làm mất lớp da bề mặt và có thể chứa nhiều đất cát. Vết rách có bờ đều hoặc nham nhở, đôi khi tổn thương mạch, thần kinh hoặc gân. Vết đâm có lỗ ngoài nhỏ nhưng tổn thương sâu và nguy cơ nhiễm trùng cao. Vết lóc làm một phần da/mô bị tách; đoạn chi bị cắt rời là cấp cứu. Vết kín như bầm hoặc tụ máu vẫn có thể che giấu chảy máu và tổn thương cơ quan.
+
+## Đánh giá ưu tiên
+
+Trước khi tập trung vào vết thương, kiểm tra đáp ứng, hô hấp và chảy máu đe dọa tính mạng. Xem cơ chế: ngã cao, vật đâm sâu, đè ép, tai nạn giao thông hoặc điện có thể gây tổn thương nghiêm trọng dù vết ngoài nhỏ.
+
+Gọi cấp cứu khi chảy máu không kiểm soát, vết ở đầu/cổ/ngực/bụng, mất cảm giác hoặc vận động, lộ xương/cơ quan, vật cắm, phần cơ thể đứt, dấu hiệu sốc hoặc người bệnh giảm ý thức.
+
+## Chăm sóc vết thương nhẹ
+
+Rửa tay và dùng găng nếu có. Kiểm soát chảy máu bằng ép nhẹ; rửa dưới nước sạch để loại đất bẩn, làm sạch vùng da xung quanh và dùng nhíp sạch cho mảnh vụn bề mặt dễ lấy. Không đào sâu hoặc cố lấy dị vật cắm. Lau khô quanh vết và che bằng băng sạch không dính.
+
+Thay băng khi ướt/bẩn và theo dõi lành. Không đổ hóa chất mạnh vào mô sâu nếu không có chỉ định vì có thể gây tổn thương. Các thuốc bôi cần theo nhãn, dị ứng và tư vấn y tế.
+
+## Vết thương do nước lũ
+
+Nước lũ có thể chứa nước thải, đất, kim loại, vi khuẩn và hóa chất. Rửa càng sớm càng tốt bằng nước sạch và xà phòng; che kín khi tiếp tục làm việc. Vết sâu, vết đâm, vết có mô dập hoặc tiếp xúc nước bẩn cần đánh giá y tế sớm. Nhân viên y tế sẽ xem xét làm sạch sâu, kháng sinh khi phù hợp và tình trạng tiêm phòng uốn ván.
+
+## Dấu hiệu nhiễm trùng và biến chứng
+
+Đỏ lan rộng, nóng, sưng, đau tăng, mủ, mùi, sốt, vệt đỏ chạy dọc chi hoặc suy nhược là dấu hiệu cần khám. Tê, lạnh, tái hoặc mất vận động phía dưới vết có thể là tổn thương tuần hoàn/thần kinh. Người tiểu đường, suy giảm miễn dịch hoặc tuần hoàn kém cần ngưỡng đánh giá thấp hơn.
+
+## Những điều không nên làm
+
+Không thăm dò vết sâu, không rút vật cắm, không đẩy mô/cơ quan trở lại và không trì hoãn cấp cứu để vệ sinh hoàn hảo. Không dùng garô cho vết nhỏ; garô chỉ cho chảy máu chi đe dọa tính mạng theo đào tạo. Không dùng thực phẩm, bột hoặc lá đắp vào vết thương.
+

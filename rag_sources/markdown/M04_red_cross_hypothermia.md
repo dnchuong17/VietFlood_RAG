@@ -1,0 +1,46 @@
+---
+source_ids: [M04]
+title: American Red Cross — Hypothermia
+source_url: https://www.redcross.org/take-a-class/resources/learn-first-aid/hypothermia
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+---
+
+# Hạ thân nhiệt
+
+Hạ thân nhiệt xảy ra khi nhiệt độ trung tâm cơ thể giảm dưới khoảng 35°C. Dấu hiệu có thể gồm run, da lạnh và nhợt, vụng về, nói khó, lú lẫn, buồn ngủ, thở và mạch chậm; trường hợp nặng có thể ngừng run và mất ý thức.
+
+Đưa người bệnh ra khỏi lạnh đến nơi khô, chắn gió; cởi hoặc cắt bỏ quần áo ướt, lau khô, mặc đồ khô và quấn chăn, kể cả đầu nhưng không che mặt. Làm ấm từ từ phần thân; tránh làm nóng đột ngột hoặc xoa bóp mạnh tay chân. Nếu tỉnh táo và nuốt được, có thể cho đồ uống ấm không chứa cồn hoặc caffeine.
+
+Gọi trợ giúp y tế, xử lý nhẹ nhàng và theo dõi hô hấp. Nếu người bệnh không đáp ứng và không thở bình thường, người đã được đào tạo thực hiện CPR và dùng AED theo hướng dẫn.
+
+## Khi nào có thể xảy ra
+
+Hạ thân nhiệt không chỉ xuất hiện ở nhiệt độ đóng băng. Quần áo ướt, ngâm nước, gió, kiệt sức, tuổi rất nhỏ hoặc cao, bệnh nền, chấn thương và rượu làm cơ thể mất nhiệt nhanh hơn. Sau lũ, người mắc kẹt hoặc dọn dẹp lâu trong nước mưa có thể bị lạnh ngay cả ở khí hậu tương đối ấm.
+
+Nước lấy nhiệt khỏi cơ thể nhanh hơn không khí. Người vừa được cứu khỏi nước cần được đánh giá cả hô hấp, chấn thương và tình trạng lạnh.
+
+## Dấu hiệu theo mức độ
+
+Giai đoạn sớm thường có run, cảm giác lạnh, da nhợt, vụng về, mất phối hợp và giảm khả năng phán đoán. Khi nặng hơn, người bệnh nói khó, lú lẫn, buồn ngủ, đi không vững; run có thể giảm hoặc ngừng dù tình trạng xấu đi. Nhịp thở và mạch có thể rất chậm, khiến việc đánh giá khó.
+
+Ở trẻ sơ sinh có thể không run rõ mà da lạnh, đỏ bất thường, giảm hoạt động hoặc bú kém. Không dựa vào một dấu hiệu duy nhất hay nhiệt kế gia dụng để loại trừ.
+
+## Sơ cứu tại hiện trường
+
+Di chuyển khỏi nước, gió và nền lạnh. Nếu không thể vào nhà, tạo lớp cách nhiệt phía dưới và che chắn. Cởi đồ ướt nhẹ nhàng, có thể cắt thay vì kéo mạnh; lau khô và mặc đồ khô. Quấn chăn quanh thân và đầu, để mặt thông thoáng.
+
+Làm ấm từ từ phần thân bằng môi trường ấm và nguồn nhiệt bọc kín, tránh đặt nhiệt trực tiếp lên da. Không xoa bóp tay chân, không cho tắm nước rất nóng và không dùng lửa trực tiếp. Làm nóng ngoại vi quá nhanh có thể gây tổn thương da và ảnh hưởng tuần hoàn.
+
+Chỉ cho đồ uống ấm, ngọt nếu người bệnh hoàn toàn tỉnh, tự nuốt được và không có nguy cơ cần thủ thuật; không cho cồn hoặc caffeine. Không cho người lú lẫn uống vì nguy cơ sặc.
+
+## Theo dõi và hồi sức
+
+Gọi trợ giúp sớm khi có thay đổi ý thức, run dữ dội hoặc ngừng run, thở bất thường, chấn thương, ngâm nước kéo dài hoặc không thể làm ấm. Xử lý nhẹ nhàng và hạn chế vận động không cần thiết.
+
+Kiểm tra hô hấp cẩn thận vì có thể rất chậm. Nếu không đáp ứng và không thở bình thường, bắt đầu CPR/AED theo đào tạo. Không tuyên bố tử vong chỉ vì cơ thể lạnh hoặc dấu hiệu sống khó nhận thấy; quyết định thuộc nhân viên y tế.
+

@@ -1,0 +1,45 @@
+---
+source_ids: [P02]
+title: "CDC — Safety Guidelines: Reentering Your Flooded Home"
+source_url: https://www.cdc.gov/floods/safety/reentering-your-flooded-home-safety.html
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+---
+
+# An toàn khi trở lại nhà bị ngập
+
+Chỉ trở lại khi cơ quan chức năng cho phép. Quan sát hư hỏng kết cấu từ bên ngoài; vào ban ngày và dùng đèn pin chạy pin, không dùng ngọn lửa. Nếu có nước đọng, dây điện hỏng hoặc nghi rò khí, không tự bật/tắt điện hay thiết bị; nhờ đơn vị chuyên môn kiểm tra.
+
+Mở cửa để thông thoáng ít nhất khoảng 30 phút trước khi ở lâu nếu nhà đã đóng kín nhiều ngày. Coi nước lũ và bùn là ô nhiễm; mang ủng, găng, kính và đồ bảo hộ. Đồ ướt cần được làm sạch và làm khô nhanh để hạn chế nấm mốc. Quạt chỉ nên thổi không khí ra ngoài và không dùng khi có nguy cơ phát tán nấm mốc sang khu vực sạch; hệ thống điều hòa/ngầm nước cần chuyên gia kiểm tra.
+
+Máy phát điện phải đặt ngoài trời, cách cửa, cửa sổ và lỗ thông gió ít nhất khoảng 6 m. Lắp thiết bị báo carbon monoxide dùng pin. Không ở trong công trình có kết cấu không an toàn, khí độc hoặc nấm mốc nghiêm trọng.
+
+## Trước khi bước vào
+
+Xác nhận khu vực đã được cho phép quay lại. Quan sát từ xa xem nhà có nghiêng, nền sụt, tường nứt lớn, mái võng, cửa kẹt bất thường hoặc cây/cột điện đổ hay không. Nếu có dấu hiệu kết cấu, chờ người đủ chuyên môn. Không vào một mình; cho người khác biết vị trí và thời gian dự kiến.
+
+Vào ban ngày nếu có thể. Dùng đèn pin chạy pin, không bật công tắc, quẹt diêm hoặc dùng bật lửa khi chưa loại trừ rò khí. Nếu ngửi thấy khí hoặc nghe tiếng xì, rời khỏi khu vực, không sử dụng điện thoại ngay bên trong và liên hệ đơn vị có thẩm quyền từ nơi an toàn.
+
+## Điện và nước đọng
+
+Không bước vào nước nếu có ổ cắm, thiết bị hoặc dây điện chìm và nguồn chưa được cô lập. Không tự đến bảng điện qua vùng ướt. Nhờ điện lực/thợ điện kiểm tra hệ thống, thiết bị và máy phát. Thiết bị từng ngập có thể nguy hiểm kể cả sau khi khô bề mặt.
+
+Nước đọng trong tầng hầm có thể tạo áp lực cân bằng với đất bão hòa bên ngoài. Bơm quá nhanh có thể làm tường/nền hỏng; thực hiện theo hướng dẫn kỹ thuật địa phương.
+
+## Thông gió và chất lượng không khí
+
+Nếu nhà đóng kín nhiều ngày, mở cửa từ ngoài nếu làm được an toàn và để thoáng trước khi ở lâu. Đề phòng động vật, côn trùng và vật rơi. Không vận hành hệ thống HVAC bị ngập hoặc nghi nhiễm mốc; nó có thể phát tán ô nhiễm khắp nhà. Nhờ người chuyên môn đánh giá ống gió, lò sưởi/điều hòa.
+
+## Làm sạch và làm khô
+
+Coi bùn/nước là nhiễm bẩn. Mang ủng chống đâm xuyên, găng phù hợp, kính và bảo hộ hô hấp. Che vết thương. Đưa trẻ em và người có nguy cơ sức khỏe ra khỏi khu vực. Loại vật liệu xốp không thể làm sạch, rửa bề mặt cứng trước khi khử trùng và làm khô càng sớm càng tốt.
+
+Quạt có thể dùng để đưa không khí ra ngoài sau khi chắc chắn điện an toàn; không hướng luồng ô nhiễm vào phần sạch hoặc nhà lân cận. Máy hút ẩm chỉ hiệu quả trong không gian đủ kín và phải thoát nước an toàn.
+
+## Carbon monoxide
+
+Máy phát, bếp than, máy rửa áp lực và động cơ xăng tạo CO. Đặt máy phát ngoài trời cách nhà ít nhất khoảng 6 m, hướng khí thải xa cửa/lỗ thông gió. Gara mở cửa vẫn không an toàn. Dùng báo CO chạy pin ở gần khu ngủ. Khi báo động hoặc có đau đầu, chóng mặt, buồn nôn, lú lẫn, đưa mọi người ra ngoài ngay và gọi trợ giúp.
+

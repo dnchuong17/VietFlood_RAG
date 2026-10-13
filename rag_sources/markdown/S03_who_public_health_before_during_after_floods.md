@@ -1,0 +1,50 @@
+---
+source_ids: [S03]
+title: WHO — Public health advice before, during and after floods
+source_url: https://www.who.int/europe/emergencies/situations/climate-crisis-extreme-weather/public-health-advice-on-protecting-your-health-before-during-and-after-floods
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+---
+
+# Bảo vệ sức khỏe trước, trong và sau lũ
+
+Trước lũ, cần biết tuyến sơ tán, theo dõi cảnh báo chính thức, chuẩn bị thuốc thiết yếu trong bao bì chống nước và lập kế hoạch cho trẻ em, người già, người khuyết tật cùng vật nuôi. Khi có yêu cầu sơ tán, làm theo chỉ dẫn của cơ quan chức năng.
+
+Trong lũ, không đi bộ, bơi hoặc lái xe qua dòng nước; tránh công trình không ổn định và dây điện. Nếu bị mắc kẹt, ở vị trí an toàn nhất có thể và chờ lực lượng cứu hộ. Không tự đặt mình vào nguy hiểm để lấy tài sản.
+
+Chỉ trở về khi cơ quan chức năng xác nhận an toàn. Nhờ người có chuyên môn kiểm tra điện và khí đốt trước khi sử dụng. Làm khô, thông gió và vệ sinh nhà; không chạy máy phát điện, bếp than hoặc thiết bị đốt nhiên liệu trong nhà hay không gian kín. Mang đồ bảo hộ khi dọn dẹp và tránh tiếp xúc với nước, bùn có thể nhiễm nước thải hoặc hóa chất. Không để trẻ chơi ở khu vực bùn, đất hoặc sân chơi bị ngập cho đến khi được làm sạch và an toàn.
+
+## Chuẩn bị trước khi nước dâng
+
+Theo dõi dự báo và thông báo của cơ quan có thẩm quyền, đồng thời biết trước cách nhận cảnh báo nếu mất điện hoặc mạng. Gia đình cần thống nhất nơi gặp, người liên hệ, tuyến sơ tán chính và tuyến thay thế. Người dùng thuốc thường xuyên nên chuẩn bị đủ thuốc và đơn thuốc, đặt trong bao bì kín nước; thiết bị y tế phụ thuộc điện cần phương án nguồn dự phòng.
+
+Chuẩn bị nước, thực phẩm, đèn, pin, radio, đồ sơ cứu, vật dụng vệ sinh và bản sao giấy tờ. Di chuyển hóa chất gia dụng, nhiên liệu và đồ nguy hiểm lên vị trí không bị ngập. Xác định cách hỗ trợ trẻ em, người lớn tuổi, người khuyết tật và vật nuôi. Không chờ nước vào nhà mới bắt đầu sơ tán nếu đã có lệnh hoặc nguy cơ rõ ràng.
+
+## Nếu phải sơ tán hoặc bị mắc kẹt
+
+Làm theo tuyến và điểm đến do chính quyền chỉ định. Tránh đường ven sông, cầu, hầm, vùng trũng và đường đã có rào chắn. Không thử kiểm tra độ sâu bằng cách đi vào nước. Dòng nước có thể mạnh hơn vẻ bề ngoài và mặt đường bên dưới có thể đã bị phá hủy.
+
+Nếu bị mắc kẹt trong nhà, di chuyển lên tầng cao hoặc mái khi cần, mang theo phương tiện liên lạc và phát tín hiệu cho cứu hộ. Không tự chui vào gác mái kín nếu không có lối thoát lên mái. Nếu ở trong xe gặp nước dâng, ưu tiên tuân theo hướng dẫn cứu hộ tại chỗ; tình huống thay đổi nhanh nên chatbot không đưa một quy tắc duy nhất cho mọi trường hợp.
+
+## Nguy cơ sức khỏe trong và ngay sau lũ
+
+Nước lũ có thể chứa phân, nước thải, xác động vật, hóa chất, nhiên liệu và vật sắc. Tiếp xúc có thể gây tiêu chảy, nhiễm trùng da hoặc vết thương. Rửa vùng tiếp xúc bằng nước sạch và xà phòng sớm nhất có thể; che kín vết thương và tìm tư vấn y tế khi vết thương sâu, bẩn, sưng đỏ, đau tăng hoặc có sốt.
+
+Không dùng thực phẩm đã chạm nước lũ hoặc bao bì không kín nước. Chỉ uống nước được xác nhận an toàn, nước đóng chai hoặc nước đã xử lý đúng hướng dẫn. Đun sôi và khử trùng không loại bỏ được nhiên liệu hay hóa chất độc.
+
+## Trở về và phục hồi nhà ở
+
+Kiểm tra dấu hiệu nứt, nghiêng, sụt nền hoặc mái/tường không ổn định trước khi vào. Không chạm thiết bị điện khi đứng trong nước. Việc đóng điện, kiểm tra khí đốt, hệ thống sưởi và điều hòa nên do người đủ chuyên môn thực hiện.
+
+Thông gió, đưa vật ướt ra và làm khô sớm để hạn chế nấm mốc. Mang găng, ủng, kính và bảo hộ hô hấp phù hợp. Người bị hen, bệnh phổi, suy giảm miễn dịch, trẻ nhỏ và người mang thai không nên ở trong khu vực có nấm mốc hoặc dọn dẹp nặng.
+
+Máy phát điện, bếp than và động cơ đốt nhiên liệu tạo khí carbon monoxide không màu, không mùi. Chỉ vận hành ngoài trời và xa cửa, cửa sổ, lỗ thông gió. Đau đầu, chóng mặt, buồn nôn, lú lẫn hoặc bất tỉnh trong khu vực có thiết bị đốt là dấu hiệu phải rời ra không khí thoáng và gọi cấp cứu.
+
+## Chăm sóc sức khỏe sau sự kiện
+
+Tiếp tục dùng thuốc theo chỉ định và liên hệ cơ sở y tế nếu thuốc bị ướt, mất hoặc bảo quản sai nhiệt độ. Theo dõi tiêu chảy, nôn, sốt, vàng da, đau cơ, khó thở và nhiễm trùng vết thương. Căng thẳng, mất ngủ, buồn bã và lo âu có thể xuất hiện; duy trì kết nối xã hội và tìm hỗ trợ chuyên môn nếu triệu chứng nặng hoặc kéo dài.
+

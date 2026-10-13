@@ -1,0 +1,42 @@
+---
+source_ids: [M02]
+title: "AHA/AAP — Top Things to Know: Drowning Resuscitation"
+source_url: https://professional.heart.org/en/science-news/2024-aha-and-aap-focused-update-on-special-circumstances-resuscitation-following-drowning/top-things-to-know
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+---
+
+# Những điểm chính về hồi sức do đuối nước
+
+Chuỗi sống còn trong đuối nước gồm phòng ngừa, nhận biết nguy hiểm, cung cấp nổi, đưa khỏi nước an toàn, hỗ trợ hô hấp và thực hiện hồi sức khi cần. Thông khí có vai trò đặc biệt vì nguyên nhân chủ yếu là thiếu oxy.
+
+Chỉ người được huấn luyện và có thể làm an toàn mới cân nhắc thổi ngạt khi còn ở dưới nước. Sau khi đưa nạn nhân lên bờ hoặc phương tiện, nếu nạn nhân ngừng tim cần thổi ngạt kết hợp ép tim. Dùng oxy nếu có người đủ năng lực và thiết bị phù hợp. Máy khử rung tự động vẫn nên được lấy và sử dụng sớm, nhưng nhịp có thể sốc điện chỉ xuất hiện ở thiểu số trường hợp và việc gắn máy không được làm gián đoạn hồi sức kéo dài.
+
+## Chuỗi sống còn dành riêng cho đuối nước
+
+Chuỗi bắt đầu trước tai nạn: phòng ngừa tiếp xúc nguy hiểm, nhận biết người gặp nạn, cung cấp vật nổi và gọi trợ giúp. Tiếp theo là đưa nạn nhân khỏi nước mà không gây nguy hiểm cho người cứu, hỗ trợ hô hấp sớm, thực hiện CPR chất lượng cao và chuyển đến chăm sóc nâng cao.
+
+Việc “cung cấp vật nổi” nhấn mạnh nguyên tắc tiếp cận từ nơi an toàn: đưa sào, dây hoặc vật nổi trước khi cân nhắc xuống nước. Cứu trực tiếp chỉ dành cho người có kỹ năng, thiết bị và điều kiện phù hợp.
+
+## Thổi ngạt trong nước
+
+Hỗ trợ thở khi vẫn ở dưới nước chỉ có thể xem xét bởi người cứu được huấn luyện, trong điều kiện an toàn và khi có khả năng giữ đường thở nạn nhân trên mặt nước. Không cố ép tim trong nước vì không tạo được lực ép hiệu quả. Nếu khoảng cách tới nơi vững ngắn, ưu tiên đưa nạn nhân ra để bắt đầu hồi sức đầy đủ.
+
+## Hành động trên bờ hoặc phương tiện
+
+Đặt nạn nhân trên mặt phẳng vững, đánh giá đáp ứng và hô hấp. Khi không thở bình thường, kích hoạt cấp cứu và bắt đầu chu kỳ hồi sức có thổi ngạt. Nếu nạn nhân nôn, xử lý đường thở nhanh rồi tiếp tục; không ngừng lâu để tìm cách loại nước khỏi phổi.
+
+Người cứu đơn độc phải cân đối thời điểm gọi trợ giúp với nhu cầu thông khí sớm theo hướng dẫn hồi sức cho độ tuổi và hoàn cảnh. Vì các chi tiết này thay đổi theo phiên bản hướng dẫn và hệ thống cấp cứu, chatbot cần trỏ đến khóa học/phác đồ đã được phê duyệt thay vì tự tạo thuật toán.
+
+## Vai trò của thiết bị
+
+Oxy, bóng-mask và dụng cụ đường thở có thể nâng chất lượng thông khí khi do người đủ kỹ năng sử dụng. Thiết bị không thay thế thao tác cơ bản và không nên trì hoãn chúng. AED được dùng ngay khi có thể nhưng phải giảm gián đoạn ép tim; môi trường xung quanh ngực phải đủ an toàn theo hướng dẫn thiết bị.
+
+## Sau khi có tuần hoàn hoặc hô hấp trở lại
+
+Duy trì đường thở, theo dõi liên tục và ngăn mất nhiệt. Tình trạng có thể xấu đi sau khi ban đầu tỉnh hoặc tự thở, nên cần đánh giá y tế khi đã có triệu chứng hoặc cần cứu hộ/hồi sức. Không khuyến khích các khái niệm thiếu căn cứ như “đuối nước khô” để trì hoãn hoặc gây hoang mang; đánh giá dựa trên triệu chứng thực tế.
+

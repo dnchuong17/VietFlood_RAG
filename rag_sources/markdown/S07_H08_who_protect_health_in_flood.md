@@ -1,0 +1,42 @@
+---
+source_ids: [S07, H08]
+title: "WHO — Floods: How to protect your health"
+source_url: https://www.who.int/news-room/questions-and-answers/item/how-do-i-protect-my-health-in-a-flood
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+---
+
+# Bảo vệ sức khỏe khi có lũ
+
+Lũ làm tăng nguy cơ chấn thương, đuối nước, bệnh do nước và thực phẩm, bệnh do véc-tơ, nhiễm trùng và ảnh hưởng sức khỏe tâm thần. Chuẩn bị bằng cách biết tín hiệu cảnh báo, tuyến sơ tán, nơi trú ẩn và nhu cầu thuốc men của gia đình.
+
+Sử dụng nguồn nước được xác nhận an toàn. Nếu cơ quan y tế yêu cầu, đun sôi hoặc khử trùng đúng hướng dẫn; giữ vệ sinh tay, bảo quản và chế biến thức ăn an toàn. Không dùng nước nghi nhiễm hóa chất chỉ bằng cách đun hoặc khử trùng thông thường.
+
+Tránh tiếp xúc với nước lũ vì nước có thể che giấu hố sâu, vật sắc, nước thải, hóa chất và nguồn điện. Không để trẻ chơi trong vùng ngập. Theo dõi thông báo y tế, kiểm soát muỗi và tìm chăm sóc y tế khi có thương tích hoặc triệu chứng bệnh.
+
+## Vì sao lũ gây ra nhiều nhóm bệnh
+
+Nguy cơ sức khỏe không kết thúc khi nước rút. Trong giai đoạn đầu, đuối nước, chấn thương, điện giật và hạ thân nhiệt nổi bật. Tiếp theo, hệ thống cấp nước và vệ sinh bị hư hỏng có thể làm tăng bệnh tiêu chảy; vết thương tiếp xúc bùn bẩn dễ nhiễm trùng. Nước đọng tạo nơi sinh sản cho muỗi, còn nhà ẩm kéo dài tạo nấm mốc.
+
+Lũ cũng làm gián đoạn điều trị bệnh mạn tính, vận chuyển cấp cứu và chuỗi lạnh của thuốc. Mất nhà, mất người thân, sinh kế và sự bất định có thể gây căng thẳng tâm lý đáng kể.
+
+## An toàn nước, thực phẩm và vệ sinh
+
+Chỉ dùng nước từ nguồn được xác nhận. Khi có khuyến cáo đun sôi, dùng nước đóng chai hoặc nước đã đun cho uống, nấu, đánh răng, pha sữa và làm đá. Nếu có thông báo không uống hoặc không sử dụng do hóa chất, đun sôi không giải quyết được vấn đề.
+
+Rửa tay bằng nước an toàn và xà phòng trước khi chế biến/ăn và sau khi tiếp xúc bùn, đi vệ sinh hoặc chăm sóc người bệnh. Bỏ thực phẩm tiếp xúc nước lũ, thực phẩm có mùi/màu bất thường và sản phẩm cần giữ lạnh đã ở nhiệt độ không an toàn quá lâu. Không nếm để quyết định thực phẩm có an toàn hay không.
+
+## Tránh tiếp xúc và xử trí sau tiếp xúc
+
+Nếu bắt buộc đi vào khu vực bùn để dọn dẹp, mang ủng, găng, kính và che vết thương. Sau đó rửa da bằng nước sạch và xà phòng, giặt riêng quần áo bẩn. Tìm chăm sóc khi vết thương sâu, do vật bẩn/kim loại, có dị vật hoặc xuất hiện đỏ, sưng, nóng, đau tăng, chảy mủ hay sốt; nhân viên y tế sẽ đánh giá nhu cầu tiêm phòng.
+
+Không để trẻ em, người có bệnh hô hấp hay suy giảm miễn dịch tham gia dọn bùn và nấm mốc. Dọn nước đọng quanh nhà khi an toàn và sử dụng biện pháp tránh muỗi được cơ quan y tế khuyến nghị.
+
+## Dấu hiệu cần trợ giúp y tế
+
+Cần đánh giá sớm khi có khó thở, đau ngực, lú lẫn, mất ý thức, chảy máu không kiểm soát, tiêu chảy/nôn nặng, mất nước, sốt kéo dài, vàng da, đau cơ dữ dội, vết thương nhiễm trùng hoặc rắn cắn. Trong thảm họa, dịch vụ có thể quá tải nên chuẩn bị thông tin bệnh, thuốc, dị ứng và người liên hệ để hỗ trợ quá trình chăm sóc.
+

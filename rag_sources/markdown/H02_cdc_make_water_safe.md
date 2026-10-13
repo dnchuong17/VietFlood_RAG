@@ -1,0 +1,47 @@
+---
+source_ids: [H02]
+title: CDC — How to Make Water Safe in an Emergency
+source_url: https://www.cdc.gov/water-emergency/about/index.html
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+chemical_dosing_review_required: true
+---
+
+# Làm cho nước an toàn trong khẩn cấp
+
+Ưu tiên nước đóng chai. Nếu không có, đun sôi là cách tốt nhất để tiêu diệt phần lớn vi sinh vật: lọc/lắng nước đục, đun sôi sùng sục một phút; nguồn tăng lên ba phút ở độ cao trên khoảng 2.000 m. Để nguội trong bình sạch có nắp.
+
+Có thể khử trùng bằng thuốc tẩy gia dụng không hương hoặc viên khử trùng theo đúng nhãn. Liều phụ thuộc nồng độ hoạt chất, thể tích và độ đục; không dùng bảng liều nếu sản phẩm không khớp điều kiện của nguồn. I-ốt có giới hạn sử dụng, đặc biệt với người mang thai hoặc bệnh tuyến giáp. Bộ lọc, UV và ánh nắng có hiệu quả khác nhau và không thay thế mọi bước.
+
+Đun, lọc hoặc khử trùng thông thường không làm nước nhiễm nhiên liệu, hóa chất độc hoặc chất phóng xạ trở nên an toàn. Khi nghi nhiễm các chất này phải dùng nguồn nước khác và làm theo cơ quan chức năng.
+
+## Xác định loại khuyến cáo
+
+Trước khi tự xử lý, kiểm tra thông báo địa phương. “Đun sôi” thường nhắm đến vi sinh vật; “không uống” hoặc “không sử dụng” có thể liên quan hóa chất/độc chất và không được giải quyết bằng đun. Không dùng nước máy, đá hoặc thiết bị nối đường nước trái với khuyến cáo.
+
+## Chuẩn bị nước đục
+
+Để hạt lớn lắng xuống, gạn phần trên và lọc qua vải sạch, khăn giấy hoặc bộ lọc thích hợp. Lọc sơ bộ chỉ giảm độ đục, không bảo đảm loại vi sinh. Sau đó mới đun hoặc khử trùng.
+
+## Đun sôi
+
+Đưa nước đến trạng thái sôi sùng sục và duy trì một phút; ở độ cao trên khoảng 2.000 m, nguồn khuyến nghị ba phút. Để nguội tự nhiên, không thêm đá chưa xử lý, rồi cất trong bình sạch kín. Đun tiêu diệt nhiều vi sinh vật nhưng không loại muối, kim loại, nhiên liệu, hóa chất hoặc chất phóng xạ; một số chất còn có thể cô đặc.
+
+## Khử trùng hóa học
+
+Chỉ dùng thuốc tẩy clo gia dụng không hương, không kèm chất làm sạch và có nồng độ được ghi rõ. Bảng liều thay đổi theo phần trăm natri hypochlorite và độ đục. Trộn, chờ đúng thời gian và lặp xử lý theo nguồn nếu điều kiện yêu cầu. Sản phẩm không ghi nồng độ hoặc đã quá cũ không thích hợp để suy liều.
+
+Viên chlorine dioxide/iodine phải theo đúng nhãn về thể tích và thời gian. I-ốt không phù hợp dùng kéo dài và có hạn chế với thai kỳ, bệnh tuyến giáp hoặc dị ứng. Không trộn các hóa chất.
+
+## Lọc, UV và ánh nắng
+
+Bộ lọc khác nhau về cỡ lỗ và sinh vật có thể loại. Nhiều bộ lọc cầm tay không loại virus, hóa chất hoặc muối; có thể cần khử trùng sau lọc. UV cần nước tương đối trong, nguồn điện/thiết bị hoạt động đúng và không để lại chất khử trùng dư. Phơi nắng là phương án hạn chế, phụ thuộc chai, độ trong, cường độ nắng và thời gian; không phù hợp nước nhiễm hóa chất.
+
+## Bảo quản để tránh tái nhiễm
+
+Dùng bình đã làm sạch và khử trùng, nắp kín, miệng nhỏ hoặc vòi. Không chạm tay/cốc bẩn vào trong. Ghi ngày và đặt xa hóa chất, ánh nắng. Nước đã xử lý vẫn có thể tái nhiễm nếu thao tác hoặc bình không sạch.
+

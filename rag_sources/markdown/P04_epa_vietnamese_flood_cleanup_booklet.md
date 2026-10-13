@@ -1,0 +1,49 @@
+---
+source_ids: [P04]
+title: US EPA — Sổ tay dọn dẹp sau lũ và không khí trong nhà, bản tiếng Việt
+source_url: https://www.epa.gov/mold/vietnamese-version-flood-cleanup-and-air-your-home-booklet
+pdf_local_path: ../pdfs/P04_flood_cleanup_air_home_vietnamese.pdf
+pdf_sha256: 767ba9d573a742a0e9b58958362b03b56ad6902d59f10ec7f0ea0b8392ff4c68
+pdf_size_bytes: 3508602
+pdf_download_status: DOWNLOADED_AND_VALIDATED_PDF_SIGNATURE
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB_AND_LOCAL_PDF
+---
+
+# Dọn dẹp sau lũ và bảo vệ không khí trong nhà
+
+Trước khi vào, kiểm tra kết cấu, điện, khí đốt và các nguy cơ rõ ràng. Nước lũ có thể mang nước thải, hóa chất và vi sinh vật. Người có hen, bệnh phổi, suy giảm miễn dịch hoặc nguy cơ sức khỏe cao không nên ở trong khu vực dọn nấm mốc. Trẻ em cũng không tham gia dọn dẹp.
+
+Nếu vật liệu còn ướt quá khoảng hai ngày, giả định có thể có nấm mốc. Mang khẩu trang lọc hạt phù hợp (tài liệu nêu N95), kính không lỗ thông, găng, quần áo dài và ủng. Loại bỏ vật liệu xốp không thể làm sạch và làm khô; làm sạch bề mặt cứng rồi làm khô hoàn toàn. Không trộn chất tẩy rửa hoặc thuốc tẩy với amoniac hay sản phẩm khác. Thông gió nhưng tránh phát tán ô nhiễm vào phần sạch của nhà.
+
+Máy phát và thiết bị đốt nhiên liệu phải ở ngoài trời, xa cửa và lỗ thông gió để tránh carbon monoxide. Sau xử lý, nhà chỉ nên được sử dụng khi đã khô, không còn mùi/ô nhiễm nhìn thấy và các hệ thống quan trọng đã được kiểm tra. Bản PDF cục bộ được giữ nguyên để truy xuất và kiểm chứng.
+
+## Quyết định tự làm hay thuê chuyên gia
+
+Không tự vào khi có nguy cơ sập, điện, khí, amiăng, sơn chì bị bong trên diện rộng, nước thải hoặc hóa chất nguy hiểm. Phạm vi nấm mốc lớn, hệ thống HVAC bị nhiễm hoặc người ở có triệu chứng cũng là lý do cần chuyên gia. Người thuê nên thông báo chủ nhà và ghi nhận tình trạng, nhưng an toàn quan trọng hơn việc chờ thủ tục.
+
+## Bảo hộ và phân vùng
+
+Tối thiểu dùng N95 đúng cách, kính bảo hộ kín, găng chịu được vật liệu đang xử lý, ủng và quần áo dài. N95 lọc hạt nhưng không bảo vệ khỏi khí/hơi hóa chất và không hoạt động tốt nếu không kín mặt. Rửa tay/mặt trước khi ăn uống; không ăn trong khu bẩn.
+
+Tách khu bẩn khỏi phần sạch bằng cửa hoặc tấm chắn; hạn chế người qua lại. Đưa không khí ẩm/ô nhiễm ra ngoài nếu không làm ảnh hưởng người khác. Bao gói vật mốc trước khi vận chuyển qua vùng sạch.
+
+## Phân loại vật liệu
+
+Vật liệu xốp như thảm, đệm, tấm trần, giấy, bìa và một số vật liệu cách nhiệt thường không thể làm sạch sau khi ngâm bẩn hoặc mốc. Gỗ đặc, kim loại, kính và nhựa cứng có thể giữ lại nếu cấu trúc còn tốt và làm sạch/làm khô được. Đồ có giá trị văn hóa hoặc giấy tờ quan trọng cần kỹ thuật bảo tồn riêng thay vì áp dụng quy trình gia dụng.
+
+Tường nhiều lớp có thể giữ ẩm bên trong dù bề mặt khô. Tháo vật liệu hư hại đủ để lộ khoang và tạo luồng khô; tránh phá vật liệu có thể chứa amiăng/chì khi chưa đánh giá.
+
+## Trình tự làm sạch
+
+Loại bùn/rác ướt, rửa bằng chất tẩy rửa phù hợp, sau đó mới khử trùng khi cần. Chất khử trùng hoạt động kém trên bề mặt còn bẩn. Làm theo nhãn về pha, thời gian tiếp xúc, thông gió và bề mặt. Không trộn thuốc tẩy với amoniac, axit hoặc chất tẩy khác.
+
+Làm khô bằng thông gió, quạt thổi ra ngoài và máy hút ẩm sau khi điện an toàn. Đo độ ẩm nếu có; chỉ đóng tường/sơn khi kết cấu đã khô, nếu không mốc có thể trở lại.
+
+## Tiêu chí hoàn thành
+
+Không còn nước/ẩm, mốc nhìn thấy hoặc mùi mốc; vật liệu mới không bị đặt lên nền còn ướt; người ở không xuất hiện triệu chứng khi trở lại. Mùi hương hoặc sơn phủ không thay thế loại bỏ nguồn ẩm và vật liệu hỏng.
+

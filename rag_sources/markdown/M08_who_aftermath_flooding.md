@@ -1,0 +1,50 @@
+---
+source_ids: [M08]
+title: WHO — Public health advice in the aftermath of flooding
+source_url: https://www.who.int/europe/news-room/questions-and-answers/item/public-health-advice-in-the-aftermath-of-flooding---how-to-protect-your-health-and-keep-safe
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+medical_review_required: true
+---
+
+# Bảo vệ sức khỏe sau lũ
+
+Sau lũ có nguy cơ chấn thương, điện giật, ngộ độc khí carbon monoxide, bệnh đường ruột, leptospirosis, bệnh do muỗi, rắn cắn và ảnh hưởng tâm lý. Chỉ trở về khi được phép; mang ủng, găng, quần áo bảo hộ và che các vết thương khi dọn dẹp. Không dùng máy phát hoặc thiết bị đốt nhiên liệu trong không gian kín.
+
+Tránh tiếp xúc trực tiếp với nước và bùn; rửa sạch sau tiếp xúc. Kiểm soát thức ăn, nước uống, rác, chuột và nơi muỗi sinh sản. Khi gặp rắn, không chạm hoặc cố bắt. Nếu bị cắn, giữ người bệnh yên, bất động tương đối chi bị cắn và đến cơ sở y tế; không rạch, hút, chà xát hay đắp hóa chất.
+
+Tìm chăm sóc y tế khi sốt, tiêu chảy, nôn, vàng da, đau đầu/đau cơ nặng, khó thở, vết thương nhiễm trùng hoặc rắn cắn. Theo dõi thông tin từ chính quyền và cơ quan y tế địa phương.
+
+## Trở về khu vực bị ngập
+
+Chỉ quay lại khi cơ quan có thẩm quyền cho phép. Đi ủng chắc, găng, quần áo dài và dùng dụng cụ thay vì tay trần để di chuyển rác. Quan sát nhà từ bên ngoài; tránh tường, mái, nền hoặc cây có dấu hiệu mất ổn định. Coi dây điện rơi là đang mang điện và giữ khoảng cách.
+
+Không dùng máy phát, bếp than, bếp gas dã ngoại hoặc động cơ trong nhà, tầng hầm, gara hay gần cửa. Carbon monoxide không có màu/mùi; đau đầu, chóng mặt, buồn nôn, yếu hoặc lú lẫn là lý do rời ngay ra ngoài và tìm trợ giúp.
+
+## Leptospirosis và tiếp xúc nước bẩn
+
+Vi khuẩn từ nước tiểu động vật có thể vào cơ thể qua da trầy hoặc niêm mạc khi tiếp xúc nước/bùn. Hạn chế lội; che vết thương, dùng bảo hộ và rửa sạch sau tiếp xúc. Sốt, đau đầu, đau cơ, mắt đỏ, nôn hoặc vàng da sau phơi nhiễm cần được đánh giá; không tự chẩn đoán vì triệu chứng giống nhiều bệnh khác.
+
+Giảm nơi trú và nguồn thức ăn của chuột bằng cách bảo quản thực phẩm kín, xử lý rác và dọn đống vật liệu khi an toàn. Không chạm xác động vật bằng tay trần.
+
+## Muỗi và côn trùng
+
+Nước đọng trong xô, lốp, mái che và phế thải có thể trở thành ổ muỗi. Đổ hoặc che dụng cụ chứa khi an toàn, dùng màn/quần áo che da và sản phẩm xua muỗi theo hướng dẫn. Các biện pháp hóa học quy mô cộng đồng thuộc cơ quan chuyên môn.
+
+## Rắn và động vật
+
+Rắn có thể vào nhà hoặc đống đổ nát. Dùng đèn, ủng và găng; không thò tay vào nơi không nhìn thấy. Nếu gặp rắn, lùi lại và gọi người có chuyên môn, không cố bắt hoặc giết.
+
+Khi bị cắn, rời khỏi tầm rắn, giữ người bệnh bình tĩnh và hạn chế cử động chi, tháo đồ trang sức/chật trước khi sưng và đến cơ sở y tế khẩn cấp. Không garô theo kiểu siết chặt, không rạch/hút, chườm đá, xoa bóp, đắp hóa chất hoặc cố bắt rắn. Nếu an toàn có thể ghi nhớ/ảnh từ xa để hỗ trợ nhận dạng, nhưng không trì hoãn vận chuyển.
+
+## Nước và thực phẩm
+
+Làm theo loại khuyến cáo nước của địa phương. Đun sôi xử lý vi sinh nhưng không loại bỏ hóa chất. Bỏ thực phẩm chạm nước lũ, thực phẩm hỏng và bao bì không chống nước. Dụng cụ tiếp xúc thực phẩm phải được làm sạch và khử trùng bằng nước an toàn.
+
+## Sức khỏe tâm thần và thông tin
+
+Phản ứng căng thẳng, khó ngủ, buồn bã hoặc cáu gắt thường gặp. Giữ liên lạc, nghỉ ngơi, duy trì nếp sinh hoạt cho trẻ và tìm hỗ trợ khi không thể hoạt động, triệu chứng kéo dài hoặc có nguy cơ tự hại. Chỉ chia sẻ cảnh báo từ nguồn chính thức và kiểm tra thời điểm phát hành.
+

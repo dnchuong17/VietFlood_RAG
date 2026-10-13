@@ -1,0 +1,42 @@
+---
+source_ids: [V02]
+title: CDC — Emergency Preparedness for People with Disabilities
+source_url: https://www.cdc.gov/disability-emergency-preparedness/people-with-disabilities/index.html
+language: vi
+representation: faithful_paraphrase
+accessed_at: 2026-09-29
+rechecked_at: 2026-09-29
+verification_status: VERIFIED_AGAINST_WEB
+localization_note: Đầu mối và hệ thống đăng ký tự nguyện của Hoa Kỳ không mặc nhiên áp dụng tại Việt Nam.
+---
+
+# Chuẩn bị khẩn cấp cho người khuyết tật
+
+Thiên tai có thể làm gián đoạn người hỗ trợ, giao thông, thuốc, điện, thiết bị y tế và phương thức giao tiếp. Kế hoạch phải dựa trên nhu cầu cá nhân: di chuyển, thị giác/thính giác, nhận thức, giao tiếp, chăm sóc, nguồn điện, chế độ ăn và thuốc.
+
+Xây dựng mạng lưới hỗ trợ, chia sẻ kế hoạch, chuẩn bị bản sao thông tin y tế, danh sách thuốc và hướng dẫn vận hành thiết bị. Có phương án sạc/nguồn dự phòng, sơ tán cùng thiết bị hỗ trợ và giao tiếp khi hệ thống thông thường hỏng. Các danh sách đăng ký hỗ trợ tự nguyện không thay thế kế hoạch cá nhân và không bảo đảm cứu hộ ngay.
+
+## Đánh giá chức năng thay vì chỉ tên khuyết tật
+
+Kế hoạch nên trả lời người đó cần gì để nhận cảnh báo, hiểu thông tin, di chuyển, duy trì hô hấp/thuốc, giao tiếp, ăn uống và tự chăm sóc. Hai người có cùng chẩn đoán có thể cần hỗ trợ hoàn toàn khác. Hỏi trực tiếp và tôn trọng lựa chọn của họ.
+
+## Cảnh báo và giao tiếp
+
+Dùng nhiều kênh: âm thanh, văn bản, hình ảnh, rung và người liên hệ. Chuẩn bị thẻ/bảng giao tiếp, bút giấy, pin máy trợ thính và cách thông dịch ngôn ngữ ký hiệu nếu có. Thông tin phải đơn giản nhưng không coi người khuyết tật là trẻ em.
+
+## Di chuyển và sơ tán
+
+Đo cửa, lối, thang và phương tiện; chuẩn bị ghế sơ tán chỉ khi người hỗ trợ được huấn luyện. Giữ thiết bị di chuyển bên người và gắn nhãn liên hệ kín đáo. Nếu phải tách thiết bị, mang bộ phận thiết yếu như đệm, sạc hoặc dụng cụ sửa.
+
+Không bế/kéo người hoặc lấy gậy, xe lăn, chó hỗ trợ khi chưa hỏi, trừ nguy hiểm tức thời. Điểm trú phải tiếp cận được nhà vệ sinh, chỗ ngủ, điện và người hỗ trợ.
+
+## Điện, thuốc và chăm sóc
+
+Lập danh sách thiết bị cần điện, công suất, thời gian pin và phương án thay thế. Không vận hành máy phát trong nhà. Chuẩn bị thuốc, đơn, chuỗi lạnh và liên hệ nhà cung cấp; không tự thay thiết bị oxy/điều trị bằng giải pháp chưa được phê duyệt.
+
+Mạng lưới hỗ trợ nên có nhiều người không cùng khu vực, biết cách hỗ trợ và được sự đồng ý tiếp cận thông tin cần thiết. Diễn tập trong điều kiện thực tế, kể cả mất điện/thang máy.
+
+## Động vật hỗ trợ
+
+Chuẩn bị thức ăn, nước, thuốc, dây/đai, hồ sơ và phương án vệ sinh. Động vật hỗ trợ không phải thú cưng và thường phải được ở cùng chủ theo quy định áp dụng; corpus cần kiểm tra pháp luật Việt Nam trước khi đưa ra khẳng định cụ thể.
+
