@@ -47,8 +47,9 @@ pipeline {
           sh '''
             set +x
             set -eu
+            revision=$(git rev-parse HEAD)
             docker build --pull \
-              --label org.opencontainers.image.revision="$GIT_COMMIT" \
+              --label org.opencontainers.image.revision="$revision" \
               -t "$IMAGE_NAME:$BUILD_NUMBER" \
               -t "$IMAGE_NAME:latest" .
           '''
