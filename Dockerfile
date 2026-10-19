@@ -4,6 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     RAG_DATA_DIR=/app/data \
+    RAG_SOURCE_DIR=/app/data/sources \
     HF_HOME=/models/huggingface \
     FASTEMBED_CACHE_PATH=/models/fastembed
 
@@ -17,6 +18,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=app:app *.py ./
+COPY --chown=app:app portal.html portal.js upload-template.md source_registry.jsonl ./
+COPY --chown=app:app rag_sources/markdown/ ./rag_sources/markdown/
 COPY --chown=app:app data/releases/ /app/data/releases/
 COPY --chown=app:app data/snapshots/ /app/data/snapshots/
 

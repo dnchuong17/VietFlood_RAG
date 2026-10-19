@@ -17,6 +17,7 @@ pipeline {
     ENV_FILE = '/opt/env/vietflood-rag.env'
     RAG_NETWORK = 'jenkins_default'
     MODEL_VOLUME = 'vietflood-rag-models'
+    CORPUS_VOLUME = 'vietflood-rag-data'
   }
 
   stages {
@@ -34,6 +35,7 @@ pipeline {
           set -eu
           test -f "$ENV_FILE" || { echo "Missing deployment env file: $ENV_FILE"; exit 1; }
           grep -q '^RAG_SERVICE_TOKEN=.' "$ENV_FILE" || { echo "RAG_SERVICE_TOKEN is required in $ENV_FILE"; exit 1; }
+          grep -q '^RAG_ADMIN_TOKEN=.' "$ENV_FILE" || { echo "RAG_ADMIN_TOKEN is required for uploads in $ENV_FILE"; exit 1; }
           grep -q '^OPENAI_API_KEY=.' "$ENV_FILE" || { echo "OPENAI_API_KEY is required in $ENV_FILE"; exit 1; }
           grep -q '^QDRANT_URL=.' "$ENV_FILE" || { echo "QDRANT_URL is required in $ENV_FILE"; exit 1; }
         '''
@@ -74,6 +76,8 @@ pipeline {
           docker network inspect "$RAG_NETWORK" >/dev/null 2>&1 || docker network create "$RAG_NETWORK"
           docker volume inspect "$MODEL_VOLUME" >/dev/null 2>&1 || docker volume create "$MODEL_VOLUME"
 
+          docker volume inspect "$CORPUS_VOLUME" >/dev/null 2>&1 || docker volume create "$CORPUS_VOLUME"
+
           docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
           docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
 
@@ -84,8 +88,10 @@ pipeline {
             --publish "127.0.0.1:$HOST_PORT:$CONTAINER_PORT" \
             --env-file "$ENV_FILE" \
             --env RAG_DATA_DIR=/app/data \
+            --env RAG_SOURCE_DIR=/app/data/sources \
             --env HF_HOME=/models/huggingface \
             --env FASTEMBED_CACHE_PATH=/models/fastembed \
+            --mount "type=volume,src=$CORPUS_VOLUME,dst=/app/data" \
             --mount "type=volume,src=$MODEL_VOLUME,dst=/models" \
             "$IMAGE_NAME:$BUILD_NUMBER"
 

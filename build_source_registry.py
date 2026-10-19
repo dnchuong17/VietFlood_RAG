@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 from typing import Any
 
@@ -84,7 +85,7 @@ def build_registry(markdown_dir: Path) -> list[dict[str, Any]]:
         if not eligible and reason is None:
             reason = "representation_not_eligible"
 
-        relative_path = path.relative_to(PROJECT_ROOT).as_posix()
+        relative_path = Path(os.path.relpath(path, PROJECT_ROOT)).as_posix()
         title = str(metadata.get("title", path.stem))
         record = {
             "document_id": source_ids[0],
