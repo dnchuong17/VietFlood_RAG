@@ -5,11 +5,11 @@ pipeline {
     skipDefaultCheckout()
     disableConcurrentBuilds()
     timestamps()
+    timeout(time: 30, unit: 'MINUTES')
     buildDiscarder(logRotator(numToKeepStr: '10'))
   }
 
   environment {
-    APP_DIR = '.'
     IMAGE_NAME = 'vietflood-retrieval'
     CONTAINER_NAME = 'rag-retrieval'
     HOST_PORT = '8001'
@@ -25,6 +25,15 @@ pipeline {
       steps {
         deleteDir()
         checkout scm
+        script {
+          if (fileExists('Dockerfile')) {
+            env.APP_DIR = '.'
+          } else if (fileExists('VietFlood/Dockerfile')) {
+            env.APP_DIR = 'VietFlood'
+          } else {
+            error('Dockerfile was not found in the repository root or VietFlood/.')
+          }
+        }
       }
     }
 
@@ -34,10 +43,12 @@ pipeline {
           set +x
           set -eu
           test -f "$ENV_FILE" || { echo "Missing deployment env file: $ENV_FILE"; exit 1; }
-          grep -q '^RAG_SERVICE_TOKEN=.' "$ENV_FILE" || { echo "RAG_SERVICE_TOKEN is required in $ENV_FILE"; exit 1; }
-          grep -q '^RAG_ADMIN_TOKEN=.' "$ENV_FILE" || { echo "RAG_ADMIN_TOKEN is required for uploads in $ENV_FILE"; exit 1; }
-          grep -q '^OPENAI_API_KEY=.' "$ENV_FILE" || { echo "OPENAI_API_KEY is required in $ENV_FILE"; exit 1; }
-          grep -q '^QDRANT_URL=.' "$ENV_FILE" || { echo "QDRANT_URL is required in $ENV_FILE"; exit 1; }
+          grep -q '^RAG_SERVICE_TOKEN=.' "$ENV_FILE" || { echo 'RAG_SERVICE_TOKEN is required.'; exit 1; }
+          grep -q '^RAG_ADMIN_TOKEN=.' "$ENV_FILE" || { echo 'RAG_ADMIN_TOKEN is required for uploads.'; exit 1; }
+          grep -q '^QDRANT_URL=.' "$ENV_FILE" || { echo 'QDRANT_URL is required.'; exit 1; }
+          if [ -f "$APP_DIR/check_embedding_runtime.py" ]; then
+            grep -q '^OPENAI_API_KEY=.' "$ENV_FILE" || { echo 'OPENAI_API_KEY is required.'; exit 1; }
+          fi
         '''
       }
     }
@@ -51,8 +62,7 @@ pipeline {
             revision=$(git rev-parse HEAD)
             docker build --pull \
               --label org.opencontainers.image.revision="$revision" \
-              -t "$IMAGE_NAME:$BUILD_NUMBER" \
-              -t "$IMAGE_NAME:latest" .
+              -t "$IMAGE_NAME:$BUILD_NUMBER" .
           '''
         }
       }
@@ -63,64 +73,20 @@ pipeline {
         sh '''
           set +x
           set -eu
-          docker run --rm --env-file "$ENV_FILE" --entrypoint python "$IMAGE_NAME:$BUILD_NUMBER" /app/check_embedding_runtime.py
+          if [ -f "$APP_DIR/check_embedding_runtime.py" ]; then
+            docker run --rm --env-file "$ENV_FILE" --entrypoint python \
+              "$IMAGE_NAME:$BUILD_NUMBER" /app/check_embedding_runtime.py
+          fi
         '''
       }
     }
 
-    stage('Deploy') {
+    stage('Deploy and verify') {
       steps {
         sh '''
           set +x
           set -eu
-          docker network inspect "$RAG_NETWORK" >/dev/null 2>&1 || docker network create "$RAG_NETWORK"
-          docker volume inspect "$MODEL_VOLUME" >/dev/null 2>&1 || docker volume create "$MODEL_VOLUME"
-
-          docker volume inspect "$CORPUS_VOLUME" >/dev/null 2>&1 || docker volume create "$CORPUS_VOLUME"
-
-          docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
-          docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
-
-          docker run -d \
-            --name "$CONTAINER_NAME" \
-            --network "$RAG_NETWORK" \
-            --restart unless-stopped \
-            --publish "127.0.0.1:$HOST_PORT:$CONTAINER_PORT" \
-            --env-file "$ENV_FILE" \
-            --env RAG_DATA_DIR=/app/data \
-            --env RAG_SOURCE_DIR=/app/data/sources \
-            --env HF_HOME=/models/huggingface \
-            --env FASTEMBED_CACHE_PATH=/models/fastembed \
-            --mount "type=volume,src=$CORPUS_VOLUME,dst=/app/data" \
-            --mount "type=volume,src=$MODEL_VOLUME,dst=/models" \
-            "$IMAGE_NAME:$BUILD_NUMBER"
-
-          echo "Container started. Check readiness at http://127.0.0.1:$HOST_PORT/health/ready from the host."
-        '''
-      }
-    }
-
-    stage('Wait for readiness') {
-      steps {
-        sh '''
-          set +x
-          set -eu
-          for attempt in $(seq 1 60); do
-            health=$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}missing{{end}}' "$CONTAINER_NAME")
-            if [ "$health" = healthy ]; then
-              echo 'Retrieval service is healthy.'
-              exit 0
-            fi
-            if [ "$health" = unhealthy ]; then
-              echo 'Retrieval service health check failed.'
-              docker logs --tail 80 "$CONTAINER_NAME" || true
-              exit 1
-            fi
-            sleep 10
-          done
-          echo 'Timed out waiting for retrieval service readiness.'
-          docker logs --tail 80 "$CONTAINER_NAME" || true
-          exit 1
+          sh "$APP_DIR/deploy_rag.sh"
         '''
       }
     }
@@ -128,10 +94,10 @@ pipeline {
 
   post {
     success {
-      echo "VietFlood retrieval image deployed: ${IMAGE_NAME}:${BUILD_NUMBER}"
+      echo "Retrieval image deployed and verified: ${IMAGE_NAME}:${BUILD_NUMBER}"
     }
     failure {
-      echo 'VietFlood retrieval deployment failed; inspect the Jenkins stage output and container logs.'
+      echo 'Deployment failed. Check preflight and rollback logs before retrying.'
     }
   }
 }

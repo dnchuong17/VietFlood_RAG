@@ -5,12 +5,12 @@ The retrieval service serves its administration page at `/admin/`; `/` redirects
 ## Deployment
 
 1. Set a new, independent `RAG_ADMIN_TOKEN` in `/opt/env/vietflood-rag.env`, alongside the existing `RAG_SERVICE_TOKEN` and Qdrant configuration. Generate a random value with `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Keep it out of Git and browser storage.
-2. Build and deploy using `Jenkinsfile`. It includes the source Markdown and registry in the image, sets `RAG_SOURCE_DIR=/app/data/sources`, mounts a persistent named corpus volume `vietflood-rag-data` at `/app/data` writable. The initial image populates its existing snapshots/releases and application ownership on first use. Existing model and corpus volumes remain persistent.
+2. Build and deploy using `Jenkinsfile` (or `VietFlood/Jenkinsfile` for a nested checkout). It detects the Docker build context, persists corpus data in `vietflood-rag-data` and models in `vietflood-rag-models`, prepares volume ownership for the non-root application user, and checks collection/model readiness before stopping the current container. If startup or health verification fails, it restores the previous container.
 3. If deploying through Compose, use `docker-compose.rag.yml`. For another Compose deployment, add `RAG_ADMIN_TOKEN`, set `RAG_SOURCE_DIR=/app/data/sources`, and change the corpus mount from `:ro` to writable. Ensure the image's `app` user can write that directory.
 4. The reverse proxy must forward `/admin/` and `/admin/api/*` to the same service as `/search`. Allow an HTTP request body of at least 11 MiB for multipart overhead. The application rejects files larger than 10 MiB. No CORS access is needed.
 5. Open `https://vietflood-rag.ndtd.indevs.in/admin/`, enter the admin token, select `VietFlood_FE_Clone`, and upload `vietflood-user-guide.md`. Wait for the completed status. Check `/health/ready` with the retrieval token and the new version's source snapshot before treating the deployment as complete.
 
-The first administrative request initializes `/app/data/sources` and `/app/data/source_registry.jsonl` from the image. Subsequent starts preserve edits and deletions. All service replicas must share the same corpus volume and locks; use one worker on a single host for this deployment. Do not publish a local candidate by switching the live alias before its snapshots and manifest exist on the service host.
+The container entrypoint initializes `/app/data/sources` and `/app/data/source_registry.jsonl` from the image. Subsequent starts preserve edits and deletions. Image snapshots/manifests are stored at `/app/bootstrap` and copied into the writable volume only when missing, including on existing volumes. All service replicas must share the same corpus volume and locks; use one worker on a single host for this deployment. Do not publish a local candidate by switching the live alias before its snapshots and manifest exist on the service host.
 
 ## HTTP contract
 
@@ -42,10 +42,12 @@ curl --fail-with-body -X PUT \
 ## Verification
 
 ```sh
-python -m unittest test_portal test_pipeline -v
+python -m unittest test_deployment test_portal test_pipeline -v
 node --check portal.js
 ```
 
 The integration test runs the actual tokenizer, BM25 encoder, pipeline and a temporary local Qdrant database with deterministic test-only dense vectors. It verifies replacement, version stability on repeat uploads, archived snapshots, unchanged unrelated vectors, authentication, size limits, metadata validation and persistent storage. It does not mutate production or establish production model quality.
 
 The repository also contains an embedding migration. Before replacing a running E5/768 service with the API/1536 image, prepare and publish the matching release and deploy its metadata using the migration instructions in `PIPELINE_README.md`. Upload UI tests do not establish that production migration has been performed.
+
+Jenkins requires Docker CLI access to the host daemon. Its deployment container stays on localhost port 8001; the reverse proxy continues to serve the configured public domain. An existing `rag-retrieval-previous` backup stops another rollout until an operator inspects it. The `latest` image tag is updated only after a healthy rollout. For an existing Compose bind mount, prepare ownership once with `docker compose -f docker-compose.rag.yml run --rm --user root --entrypoint python retrieval /app/container_entrypoint.py --prepare-volumes`.
