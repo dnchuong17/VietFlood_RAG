@@ -7,6 +7,7 @@ services:
       - "127.0.0.1:8001:8001"
     environment:
       QDRANT_URL: ${QDRANT_URL:-https://qdrant.ndtd.indevs.in:443}
+      QDRANT_INTERNAL_URL: ${QDRANT_INTERNAL_URL:-}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
       QDRANT_CHAT_COLLECTION: ${QDRANT_CHAT_COLLECTION:-flood_kb_active}
       OPENAI_API_KEY: ${OPENAI_API_KEY:?Set the embedding API key}

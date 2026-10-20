@@ -64,7 +64,7 @@ def stage(name):
         event('deployment_stage_completed', stage=name, elapsedSeconds=round(time.monotonic() - start, 2))
 
 
-REPLAY_SAFE = {'get_aliases', 'collection_exists', 'get_collection', 'count', 'retrieve', 'upsert'}
+REPLAY_SAFE = {'get_aliases', 'get_collections', 'collection_exists', 'get_collection', 'count', 'retrieve', 'upsert'}
 
 
 def transient(error):
