@@ -69,3 +69,9 @@ python -m unittest test_embeddings test_retrieval_readiness test_sync test_pipel
 Embedding, readiness and isolated local-Qdrant sync tests make no paid API calls. Pipeline tests inspect the generated corpus using the real tokenizer. `test_sync.py` covers candidate isolation, publication, stale candidates, cache reuse, deletions and publication rollback. `evaluate_production.py` needs `RAG_EVAL_API_URL` and `RAG_EVAL_BEARER_TOKEN` and exercises the deployed authenticated `/chat` route after manual cutover.
 
 `portal.py` is a localhost corpus administration tool; `watch_corpus.py` synchronizes future edits using the configured embedding API. Normal synchronization publishes immediately; use `--no-publish` during model migration. API model aliases can change upstream without an immutable version being exposed. After a known provider/model change, bump the pipeline version and rebuild to invalidate the cache.
+
+
+Administration uploads are available at `/admin/` with a separate `RAG_ADMIN_TOKEN` and a writable persistent corpus volume. See [UPLOAD_API.md](UPLOAD_API.md) for the API and deployment contract. The existing embedding migration is preserved.
+
+
+Jenkins deployment now prepares and checks a candidate before replacing the service. It automatically migrates a configured E5/768 corpus to API/1536 vectors, publishes only after the old container stops, and restores the prior alias/manifest/container on failure. See the automatic migration section in [UPLOAD_API.md](UPLOAD_API.md).

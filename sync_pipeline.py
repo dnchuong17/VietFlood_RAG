@@ -8,6 +8,12 @@ from parse_markdown import parse_registry_record
 from chunk_documents import chunk_document
 from ingest_qdrant import synchronize
 
+def prepare_corpus():
+    registry=build_registry(MARKDOWN_DIR); write_jsonl(SOURCE_REGISTRY_PATH,registry)
+    docs=[parse_registry_record(r) for r in registry if r.get('ingest_eligible') and r.get('license_status')=='APPROVED_FOR_RAG']
+    write_jsonl(PARSED_DOCUMENTS_PATH,docs)
+    write_jsonl(CHUNKS_PATH,[c for doc in docs for c in chunk_document(doc)])
+
 def main():
     # Publishing a prepared release must not regenerate the corpus.
     if '--publish-release' in sys.argv:
@@ -16,9 +22,6 @@ def main():
         return
     RAG_DATA_DIR.mkdir(parents=True,exist_ok=True)
     with FileLock(str(RAG_DATA_DIR/'sync.lock'),timeout=120):
-        registry=build_registry(MARKDOWN_DIR); write_jsonl(SOURCE_REGISTRY_PATH,registry)
-        docs=[parse_registry_record(r) for r in registry if r.get('ingest_eligible') and r.get('license_status')=='APPROVED_FOR_RAG']
-        write_jsonl(PARSED_DOCUMENTS_PATH,docs)
-        write_jsonl(CHUNKS_PATH,[c for doc in docs for c in chunk_document(doc)])
+        prepare_corpus()
         synchronize()
 if __name__=='__main__': main()

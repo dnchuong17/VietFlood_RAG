@@ -1,4 +1,4 @@
-"""Internal hybrid retrieval API. Never expose the import portal on this server."""
+"""Hybrid retrieval API with separately authenticated administration uploads."""
 import json,logging,os,re,threading,unicodedata
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -17,7 +17,7 @@ def safe_error(exc):
     if type(exc).__module__.startswith(('openai','httpx','httpcore')):
         return type(exc).__name__
     message=str(exc)
-    for secret in (QDRANT_API_KEY,os.getenv('RAG_SERVICE_TOKEN',''),os.getenv('OPENAI_API_KEY','')):
+    for secret in (QDRANT_API_KEY,os.getenv('RAG_SERVICE_TOKEN',''),os.getenv('RAG_ADMIN_TOKEN',''),os.getenv('OPENAI_API_KEY','')):
         if secret: message=message.replace(secret,'[redacted]')
     return message[:500]
 
@@ -26,12 +26,13 @@ def authorization(x_rag_token:str=Header(default='')):
     token=os.getenv('RAG_SERVICE_TOKEN','')
     if not token or not secrets.compare_digest(token,x_rag_token): raise HTTPException(401,'Retrieval service authentication required')
 
-def readiness():
-    info=client.get_collection(RAG_ALIAS)
+def readiness(collection=None):
+    target=collection or RAG_ALIAS
+    info=client.get_collection(target)
     vectors=info.config.params.vectors
     if not isinstance(vectors,dict) or 'dense' not in vectors or vectors['dense'].size!=EMBEDDING_DIMENSIONS or vectors['dense'].distance!=models.Distance.COSINE or 'bm25' not in (info.config.params.sparse_vectors or {}): raise ValueError('Incompatible vector schema')
     aliases={a.alias_name:a.collection_name for a in client.get_aliases().aliases}
-    actual=aliases.get(RAG_ALIAS,RAG_ALIAS)
+    actual=aliases.get(target,target)
     manifest=json.loads((RAG_DATA_DIR/'releases'/(actual+'.json')).read_text())
     validate_embedding_configuration()
     if manifest['embedding_model']!=EMBEDDING_MODEL:
@@ -44,16 +45,21 @@ def readiness():
 
 @asynccontextmanager
 async def lifespan(app):
+    app.state.models_ready=False
     try:
         dense_model(); sparse_model(); rerank_model()
-        logger.warning(json.dumps({'event':'retrieval_startup',**readiness()}))
         app.state.models_ready=True
+        logger.warning(json.dumps({'event':'retrieval_startup',**readiness()}))
     except Exception as exc:
-        app.state.models_ready=False
         logger.error(json.dumps({'event':'retrieval_startup_failed','errorType':type(exc).__name__,'httpStatus':getattr(exc,'status_code',None),'error':safe_error(exc)}))
     yield
     client.close()
 app=FastAPI(title='VietFlood Retrieval',lifespan=lifespan,dependencies=[Depends(authorization)])
+
+from portal import app as admin_app
+from fastapi.responses import RedirectResponse
+app.mount('/admin', admin_app)
+app.add_route('/', lambda request: RedirectResponse('/admin/'), methods=['GET'])
 
 class Search(BaseModel):
     queries:list[str]=Field(min_length=1,max_length=3)

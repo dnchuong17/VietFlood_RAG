@@ -12,10 +12,11 @@ _env_file = PROJECT_ROOT / ".env"
 if _env_file.exists():
     for _line in _env_file.read_text().splitlines():
         _key, _sep, _value = _line.partition("=")
-        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_DIMENSIONS", "OPENAI_BASE_URL", "OPENAI_API_KEY", "RERANK_MODEL", "HF_HOME"}:
+        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_ADMIN_TOKEN", "RAG_SOURCE_DIR", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_DIMENSIONS", "OPENAI_BASE_URL", "OPENAI_API_KEY", "RERANK_MODEL", "HF_HOME"}:
             os.environ.setdefault(_key.strip(), _value.strip().strip("\"'"))
-MARKDOWN_DIR = PROJECT_ROOT / "rag_sources" / "markdown"
 DATA_DIR = Path(os.getenv("RAG_DATA_DIR", str(PROJECT_ROOT / "data")))
+SEED_MARKDOWN_DIR = PROJECT_ROOT / "rag_sources" / "markdown"
+MARKDOWN_DIR = Path(os.getenv("RAG_SOURCE_DIR", str(SEED_MARKDOWN_DIR)))
 DEFAULT_MODEL_CACHE_DIR = (
     Path.home() / ".cache" / "huggingface"
     if os.name == "posix"
@@ -24,7 +25,7 @@ DEFAULT_MODEL_CACHE_DIR = (
 MODEL_CACHE_DIR = Path(os.getenv("HF_HOME", str(DEFAULT_MODEL_CACHE_DIR)))
 # Set this before importing transformers/sentence-transformers in the CLI scripts.
 os.environ.setdefault("HF_HOME", str(MODEL_CACHE_DIR))
-SOURCE_REGISTRY_PATH = PROJECT_ROOT / "source_registry.jsonl"
+SOURCE_REGISTRY_PATH = DATA_DIR / "source_registry.jsonl" if "RAG_SOURCE_DIR" in os.environ else PROJECT_ROOT / "source_registry.jsonl"
 PARSED_DOCUMENTS_PATH = DATA_DIR / "parsed_documents.jsonl"
 CHUNKS_PATH = DATA_DIR / "chunks.jsonl"
 INGEST_MANIFEST_PATH = DATA_DIR / "ingest_manifest.json"

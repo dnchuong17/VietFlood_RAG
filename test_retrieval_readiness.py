@@ -64,6 +64,19 @@ class RetrievalReadinessTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'vector schema'):
             self.service.readiness()
 
+    def test_candidate_preflight_accepts_1536_while_active_alias_still_uses_768(self):
+        old_params=SimpleNamespace(vectors={'dense':SimpleNamespace(size=768,distance=models.Distance.COSINE)},sparse_vectors={'bm25':object()})
+        def info(name):
+            params=self.params if name=='candidate' else old_params
+            return SimpleNamespace(config=SimpleNamespace(params=params))
+        self.client.get_collection.side_effect=info
+        (self.data/'releases/candidate.json').write_text(json.dumps(self.manifest))
+        with self.assertRaisesRegex(ValueError,'vector schema'): self.service.readiness()
+        ready=self.service.readiness(collection='candidate')
+        self.assertEqual(ready['collection'],'candidate')
+        self.assertEqual(ready['vectorSize'],1536)
+        self.client.update_collection_aliases.assert_not_called()
+
     def test_collection_count_mismatch_is_rejected(self):
         self.client.count.return_value.count = 1
         with self.assertRaisesRegex(ValueError, 'count mismatch'):

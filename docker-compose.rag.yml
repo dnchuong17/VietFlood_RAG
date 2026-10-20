@@ -14,8 +14,10 @@ services:
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-3-small}
       EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-1536}
       RAG_SERVICE_TOKEN: ${RAG_SERVICE_TOKEN:?Set the shared retrieval token}
+      RAG_ADMIN_TOKEN: ${RAG_ADMIN_TOKEN:?Set a separate administration token}
+      RAG_SOURCE_DIR: /app/data/sources
     volumes:
-      - ./data:/app/data:ro
+      - ./data:/app/data
       - rag_models:/models
     restart: unless-stopped
 volumes:

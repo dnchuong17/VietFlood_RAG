@@ -14,5 +14,5 @@ data/*
 !data/releases/**
 !data/snapshots/
 !data/snapshots/**
-rag_sources/
+rag_sources/pdfs/
 *.log
