@@ -10,6 +10,7 @@ import ingest_qdrant as ingest
 from kb_common import read_jsonl
 from pipeline_config import CHUNKS_PATH, QDRANT_URL, QDRANT_API_KEY, RAG_ALIAS
 from sync_pipeline import prepare_corpus
+from runtime_diagnostics import qdrant_call, stage
 
 
 def state_path(deployment_id):
@@ -38,7 +39,7 @@ def connection(client=None):
 
 
 def current_alias(client):
-    return {a.alias_name: a.collection_name for a in client.get_aliases().aliases}.get(RAG_ALIAS)
+    return {a.alias_name: a.collection_name for a in qdrant_call(client.get_aliases).aliases}.get(RAG_ALIAS)
 
 
 def prepare_release(deployment_id, client=None):
@@ -48,11 +49,15 @@ def prepare_release(deployment_id, client=None):
         if path.exists():
             raise ValueError('Deployment ID already exists')
         ingest.validate_embedding_configuration()
-        prepare_corpus()
+        # Fail before parsing or calling the embedding provider if Qdrant is unreachable.
+        with stage('qdrant_connectivity'):
+            current_alias(client)
+        with stage('prepare_corpus'):
+            prepare_corpus()
         if not read_jsonl(CHUNKS_PATH):
             raise ValueError('Refusing to deploy an empty corpus')
         args = SimpleNamespace(chunks=CHUNKS_PATH, collection=RAG_ALIAS, batch_size=16,
-                               upsert_batch_size=64, no_publish=True)
+                               upsert_batch_size=16, no_publish=True)
         manifest = ingest.build_candidate(client, args)
         state = {'status': 'prepared', 'alias': RAG_ALIAS, 'collection': manifest['collection'],
                  'previous_collection': manifest['previous_collection']}

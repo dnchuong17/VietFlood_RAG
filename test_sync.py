@@ -80,6 +80,21 @@ class SyncTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'stale'):
             ingest.publish_release(self.client, second, 'test_active')
 
+    def test_cleanup_network_failure_does_not_mask_original_candidate_error(self):
+        original = self.client.get_aliases
+        calls = 0
+        def aliases():
+            nonlocal calls
+            calls += 1
+            if calls > 1:
+                raise RuntimeError('cleanup failed')
+            return original()
+        with patch.object(self.client, 'get_aliases', side_effect=aliases), \
+             patch.object(self.client, 'upsert', side_effect=ValueError('original failure')):
+            with self.assertRaisesRegex(ValueError, 'original failure'):
+                ingest.build_candidate(self.client, self.args)
+        self.assertFalse(ingest.INGEST_MANIFEST_PATH.exists())
+
     def test_delete_sync_removes_active_points_and_preserves_old_collection(self):
         old = ingest.build_candidate(self.client, self.args)
         self.args.chunks.write_text('')

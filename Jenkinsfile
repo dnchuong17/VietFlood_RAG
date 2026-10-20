@@ -68,13 +68,25 @@ pipeline {
       }
     }
 
+    stage('Check Qdrant connectivity') {
+      steps {
+        sh '''
+          set +x
+          set -eu
+          docker network inspect "$RAG_NETWORK" >/dev/null 2>&1 || docker network create "$RAG_NETWORK"
+          docker run --rm --network "$RAG_NETWORK" --env-file "$ENV_FILE" --entrypoint python \
+            "$IMAGE_NAME:$BUILD_NUMBER" /app/check_qdrant_runtime.py
+        '''
+      }
+    }
+
     stage('Check embedding provider') {
       steps {
         sh '''
           set +x
           set -eu
           if [ -f "$APP_DIR/check_embedding_runtime.py" ]; then
-            docker run --rm --env-file "$ENV_FILE" --entrypoint python \
+            docker run --rm --network "$RAG_NETWORK" --env-file "$ENV_FILE" --entrypoint python \
               "$IMAGE_NAME:$BUILD_NUMBER" /app/check_embedding_runtime.py
           fi
         '''
