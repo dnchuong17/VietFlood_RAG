@@ -25,17 +25,23 @@ docker run --rm --user root --entrypoint python \
   --mount "type=volume,src=$MODEL_VOLUME,dst=/models" \
   "$image" /app/container_entrypoint.py --prepare-volumes
 
-# Catch missing metadata or incompatible embeddings before stopping production.
-docker run --rm --network "$RAG_NETWORK" --env-file "$ENV_FILE" \
-  --env RAG_DATA_DIR=/app/data --env RAG_SOURCE_DIR=/app/data/sources \
-  --env HF_HOME=/models/huggingface --env FASTEMBED_CACHE_PATH=/models/fastembed \
-  --mount "type=volume,src=$CORPUS_VOLUME,dst=/app/data" \
-  --mount "type=volume,src=$MODEL_VOLUME,dst=/models" \
-  "$image" --check
+# Build and check the target embedding release while production still uses its old alias.
+deployment_id="deploy-$BUILD_NUMBER-$(date +%s)-$$"
+release_command() {
+  docker run --rm --network "$RAG_NETWORK" --env-file "$ENV_FILE" \
+    --env RAG_DATA_DIR=/app/data --env RAG_SOURCE_DIR=/app/data/sources \
+    --env HF_HOME=/models/huggingface --env FASTEMBED_CACHE_PATH=/models/fastembed \
+    --mount "type=volume,src=$CORPUS_VOLUME,dst=/app/data" \
+    --mount "type=volume,src=$MODEL_VOLUME,dst=/models" \
+    "$image" "$@"
+}
+release_command --prepare-release "$deployment_id"
+release_command --check-release "$deployment_id"
 
 old_stopped=false
 old_renamed=false
 new_attempted=false
+publication_attempted=false
 rollback() {
   result=$?
   trap - EXIT HUP INT TERM
@@ -44,6 +50,9 @@ rollback() {
     if [ "$new_attempted" = true ]; then
       docker logs --tail 60 "$CONTAINER_NAME" || true
       docker rm -f "$CONTAINER_NAME" || recoverable=false
+    fi
+    if [ "$publication_attempted" = true ]; then
+      release_command --rollback-release "$deployment_id" || recoverable=false
     fi
     if [ "$old_renamed" = true ]; then
       docker rename "$backup" "$CONTAINER_NAME" || recoverable=false
@@ -69,6 +78,10 @@ if docker container inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
   docker rename "$CONTAINER_NAME" "$backup"
   old_renamed=true
 fi
+
+# Change the stable alias only after the old service has stopped.
+publication_attempted=true
+release_command --publish-release "$deployment_id"
 
 new_attempted=true
 docker run -d --name "$CONTAINER_NAME" --network "$RAG_NETWORK" \

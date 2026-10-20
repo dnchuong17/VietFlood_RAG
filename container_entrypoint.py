@@ -64,8 +64,25 @@ def main(arguments=None):
         if arguments == ['--prepare-volumes']:
             prepare_volumes()
             return 0
+        release_modes = {'--prepare-release', '--check-release', '--publish-release', '--rollback-release'}
+        if len(arguments) == 2 and arguments[0] == '--rollback-release':
+            from deployment_release import rollback_release
+            state = rollback_release(arguments[1])
+            print(json.dumps({'event': 'deployment_rollback', 'status': state['status']}))
+            return 0
         seed_artifacts()
         initialize_corpus()
+        if len(arguments) == 2 and arguments[0] in release_modes:
+            for key in ('RAG_SERVICE_TOKEN', 'RAG_ADMIN_TOKEN', 'QDRANT_URL'):
+                if not os.getenv(key, '').strip():
+                    raise ValueError('Missing deployment configuration')
+            from deployment_release import prepare_release, check_release, publish_release
+            operation = {'--prepare-release': prepare_release, '--check-release': check_release,
+                         '--publish-release': publish_release}[arguments[0]]
+            state = operation(arguments[1])
+            print(json.dumps({'event': 'deployment_release', 'operation': arguments[0],
+                              'collection': state['collection'], 'status': state.get('status', 'ready')}))
+            return 0
         if arguments == ['--check']:
             for key in ('RAG_SERVICE_TOKEN', 'RAG_ADMIN_TOKEN', 'QDRANT_URL'):
                 if not os.getenv(key, '').strip():

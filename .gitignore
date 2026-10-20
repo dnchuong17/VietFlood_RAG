@@ -11,3 +11,6 @@ data/chunks.jsonl
 data/ingest_manifest.json
 data/embedding_cache/
 data/*.lock
+
+data/deployments/
+data/upload_job.json

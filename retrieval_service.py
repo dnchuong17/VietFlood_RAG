@@ -26,12 +26,13 @@ def authorization(x_rag_token:str=Header(default='')):
     token=os.getenv('RAG_SERVICE_TOKEN','')
     if not token or not secrets.compare_digest(token,x_rag_token): raise HTTPException(401,'Retrieval service authentication required')
 
-def readiness():
-    info=client.get_collection(RAG_ALIAS)
+def readiness(collection=None):
+    target=collection or RAG_ALIAS
+    info=client.get_collection(target)
     vectors=info.config.params.vectors
     if not isinstance(vectors,dict) or 'dense' not in vectors or vectors['dense'].size!=EMBEDDING_DIMENSIONS or vectors['dense'].distance!=models.Distance.COSINE or 'bm25' not in (info.config.params.sparse_vectors or {}): raise ValueError('Incompatible vector schema')
     aliases={a.alias_name:a.collection_name for a in client.get_aliases().aliases}
-    actual=aliases.get(RAG_ALIAS,RAG_ALIAS)
+    actual=aliases.get(target,target)
     manifest=json.loads((RAG_DATA_DIR/'releases'/(actual+'.json')).read_text())
     validate_embedding_configuration()
     if manifest['embedding_model']!=EMBEDDING_MODEL:

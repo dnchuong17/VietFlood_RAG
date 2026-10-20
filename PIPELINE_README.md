@@ -72,3 +72,6 @@ Embedding, readiness and isolated local-Qdrant sync tests make no paid API calls
 
 
 Administration uploads are available at `/admin/` with a separate `RAG_ADMIN_TOKEN` and a writable persistent corpus volume. See [UPLOAD_API.md](UPLOAD_API.md) for the API and deployment contract. The existing embedding migration is preserved.
+
+
+Jenkins deployment now prepares and checks a candidate before replacing the service. It automatically migrates a configured E5/768 corpus to API/1536 vectors, publishes only after the old container stops, and restores the prior alias/manifest/container on failure. See the automatic migration section in [UPLOAD_API.md](UPLOAD_API.md).

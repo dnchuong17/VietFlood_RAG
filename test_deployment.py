@@ -25,13 +25,23 @@ if args[:2]==['container','inspect']:
 elif args[0]=='run':
     if '--prepare-volumes' in args:
         code=1 if mode=='prepare_failed' else 0
-    elif '--check' in args:
-        code=1 if mode=='preflight_failed' else 0
+    elif '--prepare-release' in args:
+        code=1 if mode=='candidate_failed' else 0
+        if not code: state['candidate']='api_1536'
+    elif '--check-release' in args:
+        state['preflight_alias']=state['alias']
+        code=1 if mode=='preflight_failed' or state.get('candidate')!='api_1536' else 0
+    elif '--publish-release' in args:
+        if mode!='publish_failed': state['alias']='api_1536'
+        code=1 if mode in ['publish_failed','publish_uncertain'] else 0
+    elif '--rollback-release' in args:
+        if mode=='alias_rollback_failed': code=1
+        else: state['alias']=state['previous_alias']
     else:
         name=args[args.index('--name')+1]
         containers[name]={'image':args[-1],'state':'running','health':'healthy'}
         if mode=='start_failed': containers[name]['state']='exited';code=1
-        if mode in ['unhealthy','rollback_failed']: containers[name]['health']='unhealthy'
+        if mode in ['unhealthy','rollback_failed','alias_rollback_failed'] or state['alias']!='api_1536': containers[name]['health']='unhealthy'
         if mode=='timeout': containers[name]['health']='starting'
 elif args[0]=='stop':
     containers[args[-1]]['state']='exited'
@@ -41,7 +51,7 @@ elif args[0]=='rename':
     else:
         containers[args[-1]]=containers.pop(args[-2])
 elif args[0]=='start':
-    if mode=='rollback_failed': code=1
+    if mode=='rollback_failed' or state['alias']!=state['previous_alias']: code=1
     else: containers[args[-1]]['state']='running'
 elif args[0]=='rm':
     if mode=='cleanup_failed' and args[-1].endswith('-previous'): code=1
@@ -121,6 +131,26 @@ class ArtifactBootstrapTests(unittest.TestCase):
         self.assertNotIn('SECRET',output.getvalue())
         fake.client.close.assert_called_once()
 
+    def test_deployment_modes_dispatch_to_transaction(self):
+        state={'status':'prepared','collection':'candidate'}
+        fake=SimpleNamespace(prepare_release=Mock(return_value=state),check_release=Mock(return_value=state),publish_release=Mock(return_value=state),rollback_release=Mock(return_value=state))
+        env={'RAG_SERVICE_TOKEN':'test-read','RAG_ADMIN_TOKEN':'test-admin','QDRANT_URL':'https://example.test'}
+        with patch.object(entry,'initialize_corpus') as initialize,patch.dict(os.environ,env), \
+             patch.dict('sys.modules',{'deployment_release':fake}),contextlib.redirect_stdout(io.StringIO()):
+            for mode in ['--prepare-release','--check-release','--publish-release','--rollback-release']:
+                self.assertEqual(entry.main([mode,'run1']),0,mode)
+        self.assertEqual(initialize.call_count,3)
+        for operation in [fake.prepare_release,fake.check_release,fake.publish_release,fake.rollback_release]:
+            operation.assert_called_once_with('run1')
+
+    def test_rollback_skips_source_bootstrap_and_new_model_configuration(self):
+        fake=SimpleNamespace(rollback_release=Mock(return_value={'status':'rolled_back'}))
+        with patch.object(entry,'initialize_corpus',side_effect=AssertionError('must not bootstrap')), \
+             patch.object(entry,'seed_artifacts',side_effect=AssertionError('must not seed')), \
+             patch.dict(os.environ,{'RAG_ADMIN_TOKEN':'','RAG_SERVICE_TOKEN':''}), \
+             patch.dict('sys.modules',{'deployment_release':fake}),contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(entry.main(['--rollback-release','run1']),0)
+
     def test_volume_preparation_does_not_follow_symlinks(self):
         models=self.root/'models';models.mkdir()
         outside=self.root/'outside';outside.write_text('keep')
@@ -144,7 +174,7 @@ class DeploymentTests(unittest.TestCase):
             containers={}
             if old: containers['rag']={'image':'previous-image','state':'running','health':'healthy'}
             if backup: containers['rag-previous']={'image':'older-image','state':'exited','health':'healthy'}
-            state=root/'state.json';state.write_text(json.dumps({'containers':containers,'events':[]}))
+            state=root/'state.json';state.write_text(json.dumps({'containers':containers,'events':[],'alias':'old_e5' if old else None,'previous_alias':'old_e5' if old else None}))
             env={**os.environ,'PATH':str(root)+os.pathsep+os.environ['PATH'],
                 'FAKE_DOCKER_STATE':str(state),'FAKE_DOCKER_MODE':mode,
                 'IMAGE_NAME':'retrieval','BUILD_NUMBER':'2','CONTAINER_NAME':'rag','ENV_FILE':str(root/'test.env'),
@@ -157,6 +187,14 @@ class DeploymentTests(unittest.TestCase):
         result,state=self.run_deployment('healthy')
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertEqual(state['containers']['rag']['image'],'retrieval:2')
+        self.assertEqual(state['alias'],'api_1536')
+        self.assertEqual(state['preflight_alias'],'old_e5')
+        events=state['events']
+        prepare=next(i for i,x in enumerate(events) if '--prepare-release' in x)
+        stop=next(i for i,x in enumerate(events) if x[0]=='stop')
+        publish=next(i for i,x in enumerate(events) if '--publish-release' in x)
+        start=next(i for i,x in enumerate(events) if x[0]=='run' and '-d' in x)
+        self.assertLess(prepare,stop);self.assertLess(stop,publish);self.assertLess(publish,start)
         self.assertNotIn('rag-previous',state['containers'])
         events=state['events'];health=next(i for i,x in enumerate(events) if x[0]=='inspect' and 'State.Health' in x[2])
         remove=next(i for i,x in enumerate(events) if x==['rm','rag-previous'])
@@ -164,7 +202,7 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(events[-1],['tag','retrieval:2','retrieval:latest'])
 
     def test_preflight_and_ownership_failures_do_not_stop_previous_container(self):
-        for mode in ['preflight_failed','prepare_failed']:
+        for mode in ['preflight_failed','prepare_failed','candidate_failed']:
             result,state=self.run_deployment(mode)
             self.assertNotEqual(result.returncode,0)
             self.assertEqual(state['containers']['rag']['image'],'previous-image')
@@ -172,11 +210,12 @@ class DeploymentTests(unittest.TestCase):
             self.assertFalse(any(x[0]=='stop' for x in state['events']))
 
     def test_start_health_timeout_and_rename_failures_restore_previous_container(self):
-        for mode in ['start_failed','unhealthy','timeout','rename_failed']:
+        for mode in ['start_failed','unhealthy','timeout','rename_failed','publish_failed','publish_uncertain']:
             result,state=self.run_deployment(mode)
             self.assertNotEqual(result.returncode,0,mode)
             self.assertEqual(state['containers']['rag']['image'],'previous-image',mode)
             self.assertEqual(state['containers']['rag']['state'],'running',mode)
+            self.assertEqual(state['alias'],'old_e5',mode)
             self.assertNotIn('rag-previous',state['containers'])
             self.assertFalse(any(x[0]=='tag' for x in state['events']))
 
@@ -191,6 +230,14 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(state['containers']['rag']['image'],'previous-image')
         self.assertIn('Manual recovery required',result.stderr)
         self.assertNotIn('Previous retrieval container restored',result.stderr)
+
+    def test_alias_rollback_failure_does_not_restart_service_with_wrong_vector_schema(self):
+        result,state=self.run_deployment('alias_rollback_failed')
+        self.assertNotEqual(result.returncode,0)
+        self.assertEqual(state['alias'],'api_1536')
+        self.assertEqual(state['containers']['rag']['state'],'exited')
+        self.assertIn('Manual recovery required',result.stderr)
+        self.assertFalse(any(x[0]=='start' for x in state['events']))
 
     def test_existing_backup_is_preserved(self):
         result,state=self.run_deployment('healthy',backup=True)
