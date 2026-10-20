@@ -22,6 +22,7 @@ class RuntimeDiagnosticsTests(unittest.TestCase):
         self.addCleanup(redirect.__exit__, None, None, None)
         self.sleep = patch.object(diagnostics.time, 'sleep').start()
         self.addCleanup(patch.stopall)
+        patch.object(probe, 'QDRANT_INTERNAL_URL', '').start()
 
     def request(self, operation, effects):
         callback = Mock(side_effect=effects)
@@ -115,6 +116,35 @@ class RuntimeDiagnosticsTests(unittest.TestCase):
         self.assertIn('qdrant_connectivity_failed', self.output.getvalue())
         self.assertIn('ConnectError', self.output.getvalue())
         self.assertNotIn('SECRET', self.output.getvalue())
+
+    def test_internal_probe_rejects_a_different_local_database(self):
+        local,public=Mock(),Mock()
+        for client,name in [(local,'local_other_db'),(public,'production_db')]:
+            client.get_aliases=self.request('get_aliases',[SimpleNamespace(aliases=[SimpleNamespace(alias_name=probe.RAG_ALIAS,collection_name=name)])])
+        with patch.object(probe,'QDRANT_INTERNAL_URL','http://db:6333'), \
+             patch.object(probe,'QDRANT_URL','http://db:6333'), \
+             patch.object(probe,'QDRANT_CONFIGURED_URL','https://example.test'), \
+             patch.object(probe,'QdrantClient',side_effect=[local,public]):
+            self.assertEqual(probe.main(),1)
+        public.close.assert_called_once()
+        local.close.assert_called_once()
+        local.upsert.assert_not_called()
+        local.update_collection_aliases.assert_not_called()
+        self.assertNotIn('qdrant_internal_identity_verified',self.output.getvalue())
+
+    def test_internal_probe_verifies_matching_alias_before_adopting_route(self):
+        local,public=Mock(),Mock()
+        for client in [local,public]:
+            client.get_aliases=self.request('get_aliases',[SimpleNamespace(aliases=[SimpleNamespace(alias_name=probe.RAG_ALIAS,collection_name='production_db')])])
+        local.get_collection=self.request('get_collection',[SimpleNamespace(vector_size=768)])
+        with patch.object(probe,'QDRANT_INTERNAL_URL','http://db:6333'), \
+             patch.object(probe,'QDRANT_URL','http://db:6333'), \
+             patch.object(probe,'QDRANT_CONFIGURED_URL','https://example.test'), \
+             patch.object(probe,'QdrantClient',side_effect=[local,public]):
+            self.assertEqual(probe.main(),0)
+        self.assertIn('qdrant_internal_identity_verified',self.output.getvalue())
+        public.close.assert_called_once()
+        local.close.assert_called_once()
 
 
 if __name__ == '__main__':

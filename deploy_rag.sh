@@ -17,6 +17,7 @@ fi
 docker network inspect "$RAG_NETWORK" >/dev/null 2>&1 || docker network create "$RAG_NETWORK"
 docker volume inspect "$MODEL_VOLUME" >/dev/null 2>&1 || docker volume create "$MODEL_VOLUME"
 docker volume inspect "$CORPUS_VOLUME" >/dev/null 2>&1 || docker volume create "$CORPUS_VOLUME"
+. "$(dirname "$0")/qdrant_network.sh"
 
 # Repair existing volume ownership without running the service as root.
 docker run --rm --user root --entrypoint python \
@@ -29,6 +30,7 @@ docker run --rm --user root --entrypoint python \
 deployment_id="deploy-$BUILD_NUMBER-$(date +%s)-$$"
 release_command() {
   docker run --rm --network "$RAG_NETWORK" --env-file "$ENV_FILE" \
+    --env "QDRANT_INTERNAL_URL=$QDRANT_INTERNAL_URL" \
     --env RAG_DATA_DIR=/app/data --env RAG_SOURCE_DIR=/app/data/sources \
     --env HF_HOME=/models/huggingface --env FASTEMBED_CACHE_PATH=/models/fastembed \
     --mount "type=volume,src=$CORPUS_VOLUME,dst=/app/data" \
@@ -88,6 +90,7 @@ docker run -d --name "$CONTAINER_NAME" --network "$RAG_NETWORK" \
   --restart unless-stopped \
   --publish "127.0.0.1:$HOST_PORT:$CONTAINER_PORT" \
   --env-file "$ENV_FILE" \
+  --env "QDRANT_INTERNAL_URL=$QDRANT_INTERNAL_URL" \
   --env RAG_DATA_DIR=/app/data --env RAG_SOURCE_DIR=/app/data/sources \
   --env HF_HOME=/models/huggingface --env FASTEMBED_CACHE_PATH=/models/fastembed \
   --mount "type=volume,src=$CORPUS_VOLUME,dst=/app/data" \

@@ -179,7 +179,8 @@ class DeploymentTests(unittest.TestCase):
                 'FAKE_DOCKER_STATE':str(state),'FAKE_DOCKER_MODE':mode,
                 'IMAGE_NAME':'retrieval','BUILD_NUMBER':'2','CONTAINER_NAME':'rag','ENV_FILE':str(root/'test.env'),
                 'RAG_NETWORK':'network','MODEL_VOLUME':'models','CORPUS_VOLUME':'corpus',
-                'HOST_PORT':'8001','CONTAINER_PORT':'8001','HEALTH_ATTEMPTS':'2','HEALTH_DELAY':'0'}
+                'HOST_PORT':'8001','CONTAINER_PORT':'8001','HEALTH_ATTEMPTS':'2','HEALTH_DELAY':'0',
+                'QDRANT_LOCAL_DOCKER':'0','QDRANT_INTERNAL_URL':'http://verified-db:6333'}
             result=subprocess.run(['sh',str(ROOT/'deploy_rag.sh')],env=env,capture_output=True,text=True,timeout=30)
             return result,json.loads(state.read_text())
 
@@ -208,6 +209,15 @@ class DeploymentTests(unittest.TestCase):
             self.assertEqual(state['containers']['rag']['image'],'previous-image')
             self.assertEqual(state['containers']['rag']['state'],'running')
             self.assertFalse(any(x[0]=='stop' for x in state['events']))
+
+    def test_preparation_publication_service_and_rollback_all_use_internal_url(self):
+        result,state=self.run_deployment('unhealthy')
+        self.assertNotEqual(result.returncode,0)
+        calls=[a for a in state['events'] if a[0]=='run' and '--prepare-volumes' not in a]
+        self.assertEqual(len(calls),5)
+        for call in calls:
+            self.assertIn('QDRANT_INTERNAL_URL=http://verified-db:6333',call)
+        self.assertEqual(state['alias'],'old_e5')
 
     def test_start_health_timeout_and_rename_failures_restore_previous_container(self):
         for mode in ['start_failed','unhealthy','timeout','rename_failed','publish_failed','publish_uncertain']:
@@ -258,6 +268,8 @@ class DeploymentTests(unittest.TestCase):
             result=subprocess.run(['sh','-n'],input=block,capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stderr)
         result=subprocess.run(['sh','-n',str(ROOT/'deploy_rag.sh')],capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stderr)
+        result=subprocess.run(['sh','-n',str(ROOT/'qdrant_network.sh')],capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
 
 

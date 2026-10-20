@@ -65,16 +65,20 @@ def prepare_release(deployment_id, client=None):
         return state
 
 
-def check_release(deployment_id):
+def check_release(deployment_id, client=None):
     state = load_state(deployment_id)
     if state['status'] != 'prepared':
         raise ValueError('Deployment is not prepared')
-    from retrieval_service import client, readiness
-    try:
-        # Test the candidate itself while the old alias continues serving old vectors.
-        return readiness(collection=state['collection'])
-    finally:
-        client.close()
+    # Do not import the HTTP service and silently switch to its 10-second client.
+    # Use the migration connection and the full candidate validator, including
+    # bounded retries, while the stable alias still points to the old release.
+    manifest = json.loads(ingest.release_path(state['collection']).read_text())
+    if manifest['collection'] != state['collection'] or manifest['alias'] != RAG_ALIAS:
+        raise ValueError('Release identity mismatch')
+    ingest.validate_embedding_configuration()
+    with connection(client) as client:
+        ingest.validate_release(client, manifest)
+    return {'status': 'ready', 'collection': state['collection'], 'pointCount': manifest['point_count']}
 
 
 def publish_release(deployment_id, client=None):

@@ -148,10 +148,45 @@ class MigrationTests(unittest.TestCase):
         self.assertTrue(self.client.collection_exists(state['collection']))
 
     def test_preflight_targets_candidate_without_switching_alias(self):
-        state=self.prepare();fake=SimpleNamespace(client=Mock(),readiness=Mock(return_value={'status':'ready','collection':state['collection']}))
-        with patch.dict('sys.modules',{'retrieval_service':fake}): deployment.check_release('run1')
-        fake.readiness.assert_called_once_with(collection=state['collection'])
-        fake.client.close.assert_called_once()
+        state=self.prepare()
+        # Preflight must not import the HTTP service or its short-timeout client.
+        with patch.dict('sys.modules',{'retrieval_service':None}):
+            ready=deployment.check_release('run1',self.client)
+        self.assertEqual(ready['collection'],state['collection'])
+        self.assertEqual(ready['pointCount'],1)
+        self.assertEqual(self.alias(),'old_e5')
+
+    def test_preflight_retries_the_reported_connect_timeout_then_validates_candidate(self):
+        state=self.prepare()
+        original=self.client.get_collection
+        calls=0
+        def get_collection(*args,**kwargs):
+            nonlocal calls
+            calls+=1
+            if calls==1:
+                raise ResponseHandlingException(httpx.ConnectTimeout('connection timed out'))
+            return original(*args,**kwargs)
+        with patch.object(self.client,'get_collection',get_collection), patch('runtime_diagnostics.time.sleep') as sleep:
+            ready=deployment.check_release('run1',self.client)
+        self.assertEqual(ready['collection'],state['collection'])
+        self.assertEqual(calls,2)
+        sleep.assert_called_once_with(2)
+        self.assertEqual(self.alias(),'old_e5')
+
+    def test_preflight_owns_a_60_second_connection_and_closes_it_on_failure(self):
+        self.prepare()
+        client=Mock()
+        client.get_collection.side_effect=ValueError('incompatible schema')
+        with patch.object(deployment,'QdrantClient',return_value=client) as factory:
+            with self.assertRaises(ValueError):deployment.check_release('run1')
+        self.assertEqual(factory.call_args.kwargs['timeout'],60)
+        client.close.assert_called_once()
+
+    def test_preflight_rejects_corrupted_candidate_without_moving_alias(self):
+        state=self.prepare()
+        self.client.delete(state['collection'],models.PointIdsList(points=['b7f186de-263c-41da-a74e-9d29c9a4b92f']),wait=True)
+        with self.assertRaisesRegex(ValueError,'count mismatch'):
+            deployment.check_release('run1',self.client)
         self.assertEqual(self.alias(),'old_e5')
 
     def test_duplicate_or_invalid_deployment_id_is_rejected(self):

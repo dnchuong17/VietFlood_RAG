@@ -16,6 +16,8 @@ pipeline {
     CONTAINER_PORT = '8001'
     ENV_FILE = '/opt/env/vietflood-rag.env'
     RAG_NETWORK = 'jenkins_default'
+    // Qdrant runs on this Docker host; discover its actual name instead of using the public tunnel.
+    QDRANT_LOCAL_DOCKER = '1'
     MODEL_VOLUME = 'vietflood-rag-models'
     CORPUS_VOLUME = 'vietflood-rag-data'
   }
@@ -73,9 +75,10 @@ pipeline {
         sh '''
           set +x
           set -eu
+          . "$APP_DIR/qdrant_network.sh"
           docker network inspect "$RAG_NETWORK" >/dev/null 2>&1 || docker network create "$RAG_NETWORK"
           docker run --rm --network "$RAG_NETWORK" --env-file "$ENV_FILE" --entrypoint python \
-            "$IMAGE_NAME:$BUILD_NUMBER" /app/check_qdrant_runtime.py
+            --env "QDRANT_INTERNAL_URL=$QDRANT_INTERNAL_URL" "$IMAGE_NAME:$BUILD_NUMBER" /app/check_qdrant_runtime.py
         '''
       }
     }

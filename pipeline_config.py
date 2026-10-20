@@ -12,7 +12,7 @@ _env_file = PROJECT_ROOT / ".env"
 if _env_file.exists():
     for _line in _env_file.read_text().splitlines():
         _key, _sep, _value = _line.partition("=")
-        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_ADMIN_TOKEN", "RAG_SOURCE_DIR", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_DIMENSIONS", "OPENAI_BASE_URL", "OPENAI_API_KEY", "RERANK_MODEL", "HF_HOME"}:
+        if _sep and _key.strip() in {"QDRANT_URL", "QDRANT_INTERNAL_URL", "QDRANT_API_KEY", "QDRANT_CHAT_COLLECTION", "RAG_SERVICE_TOKEN", "RAG_ADMIN_TOKEN", "RAG_SOURCE_DIR", "RAG_DATA_DIR", "EMBEDDING_MODEL", "EMBEDDING_DIMENSIONS", "OPENAI_BASE_URL", "OPENAI_API_KEY", "RERANK_MODEL", "HF_HOME"}:
             os.environ.setdefault(_key.strip(), _value.strip().strip("\"'"))
 DATA_DIR = Path(os.getenv("RAG_DATA_DIR", str(PROJECT_ROOT / "data")))
 SEED_MARKDOWN_DIR = PROJECT_ROOT / "rag_sources" / "markdown"
@@ -40,9 +40,11 @@ EMBEDDING_DOCUMENT_PREFIX = ""
 EMBEDDING_QUERY_PREFIX = ""
 PIPELINE_VERSION = "rag-v3-api-cl100k450-bm25-nostem-256"
 
-QDRANT_URL = os.getenv(
+QDRANT_CONFIGURED_URL = os.getenv(
     "QDRANT_URL", "https://qdrant.ndtd.indevs.in:443"
 )
+QDRANT_INTERNAL_URL = os.getenv("QDRANT_INTERNAL_URL", "").strip()
+QDRANT_URL = QDRANT_INTERNAL_URL or QDRANT_CONFIGURED_URL
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 QDRANT_COLLECTION = os.getenv(
     "QDRANT_COLLECTION",
