@@ -7,7 +7,9 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 import numpy as np
+import httpx
 from qdrant_client import QdrantClient, models
+from qdrant_client.http.exceptions import ResponseHandlingException
 import deployment_release as deployment
 import ingest_qdrant as ingest
 
@@ -80,6 +82,28 @@ class MigrationTests(unittest.TestCase):
         self.assertEqual(self.alias(),'old_e5')
         self.assertEqual(json.loads(self.manifest_path.read_text()),self.old_manifest)
         self.assertFalse(deployment.state_path('run1').exists())
+
+    def test_lost_upsert_response_replays_identical_ids_without_duplicates(self):
+        original = self.client.upsert
+        calls = 0
+        def upsert(*args, **kwargs):
+            nonlocal calls
+            calls += 1
+            result = original(*args, **kwargs)
+            if calls == 1:
+                raise ResponseHandlingException(httpx.ReadTimeout('response lost after write'))
+            return result
+        with patch.object(self.client, 'upsert', upsert), patch('runtime_diagnostics.time.sleep'):
+            state = self.prepare()
+        self.assertEqual(calls, 2)
+        self.assertEqual(self.client.count(state['collection'], exact=True).count, 1)
+        self.assertEqual(self.alias(), 'old_e5')
+
+    def test_connectivity_failure_does_not_call_embedding_provider(self):
+        with patch.object(self.client, 'get_aliases', side_effect=ResponseHandlingException(httpx.ConnectError('unreachable'))):
+            with self.assertRaises(ResponseHandlingException): self.prepare()
+        self.encode.assert_not_called()
+        self.assertEqual(self.alias(), 'old_e5')
 
     def test_empty_corpus_cannot_replace_existing_knowledge(self):
         self.chunks.write_text('')

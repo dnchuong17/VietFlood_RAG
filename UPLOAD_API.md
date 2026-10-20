@@ -55,6 +55,10 @@ Jenkins requires Docker CLI access to the host daemon. Its deployment container 
 
 ## Automatic embedding migration during Jenkins deployment
 
+Jenkins first probes Qdrant from `RAG_NETWORK`, before checking the embedding provider or preparing a release. This probe accepts an existing 768-dimensional collection during migration and performs no writes. Both probes use the same Docker network as the service. If the public Qdrant URL cannot be reached from that network, set `QDRANT_URL` to the actual internal Qdrant service address on the shared network; do not guess a container name.
+
+Deployment logs report stage, Qdrant operation, elapsed time and exception type chain (including the `.source` inside `ResponseHandlingException`). DNS, certificate and timeout failures are distinguished without printing credentials, URLs or response bodies. Reads and identical point upserts retry transient transport errors or HTTP 502/503/504 up to three attempts with 2/4-second backoff. Alias changes and collection creation are never automatically replayed. Migration upserts use 16-point batches to reduce request size. Failed cleanup preserves the initial exception; an unreferenced candidate may remain for later inspection.
+
 The deployment script now handles an existing E5/768 active collection with the API/1536 service:
 
 1. `--prepare-release <id>` parses persistent sources, creates API embeddings and validates a new collection with snapshots/manifest. The old alias keeps serving old vectors.

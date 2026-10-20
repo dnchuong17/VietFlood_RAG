@@ -9,6 +9,7 @@ import uuid
 from filelock import FileLock
 from pipeline_config import RAG_DATA_DIR
 from corpus_storage import initialize_corpus
+from runtime_diagnostics import error_details, stage
 
 BOOTSTRAP_DIR = Path('/app/bootstrap')
 MODEL_DIR = Path('/models')
@@ -70,8 +71,9 @@ def main(arguments=None):
             state = rollback_release(arguments[1])
             print(json.dumps({'event': 'deployment_rollback', 'status': state['status']}))
             return 0
-        seed_artifacts()
-        initialize_corpus()
+        with stage('initialize_corpus'):
+            seed_artifacts()
+            initialize_corpus()
         if len(arguments) == 2 and arguments[0] in release_modes:
             for key in ('RAG_SERVICE_TOKEN', 'RAG_ADMIN_TOKEN', 'QDRANT_URL'):
                 if not os.getenv(key, '').strip():
@@ -79,7 +81,8 @@ def main(arguments=None):
             from deployment_release import prepare_release, check_release, publish_release
             operation = {'--prepare-release': prepare_release, '--check-release': check_release,
                          '--publish-release': publish_release}[arguments[0]]
-            state = operation(arguments[1])
+            with stage(arguments[0][2:]):
+                state = operation(arguments[1])
             print(json.dumps({'event': 'deployment_release', 'operation': arguments[0],
                               'collection': state['collection'], 'status': state.get('status', 'ready')}))
             return 0
@@ -100,7 +103,7 @@ def main(arguments=None):
     except Exception as error:
         # Configuration/provider exceptions must not expose credentials.
         print(json.dumps({'event': 'container_initialization_failed',
-                          'errorType': type(error).__name__}), file=sys.stderr)
+                          **error_details(error)}), file=sys.stderr)
         return 1
 
 

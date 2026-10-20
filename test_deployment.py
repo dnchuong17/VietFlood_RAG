@@ -253,7 +253,7 @@ class DeploymentTests(unittest.TestCase):
 
     def test_all_jenkins_shell_blocks_have_valid_shell_syntax(self):
         blocks=re.findall(r"sh '''(.*?)'''",(ROOT/'Jenkinsfile').read_text(),re.S)
-        self.assertEqual(len(blocks),4)
+        self.assertEqual(len(blocks),5)
         for block in blocks:
             result=subprocess.run(['sh','-n'],input=block,capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stderr)

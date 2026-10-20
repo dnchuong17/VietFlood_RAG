@@ -12,6 +12,7 @@ from pipeline_config import (
     CHUNKS_PATH, PARSED_DOCUMENTS_PATH, EMBEDDING_MODEL, EMBEDDING_DIMENSIONS,
     QDRANT_URL, QDRANT_API_KEY, RAG_ALIAS, RAG_DATA_DIR, INGEST_MANIFEST_PATH,
 )
+from runtime_diagnostics import qdrant_call, stage, event, error_details
 from rag_models import (
     encode_dense, sparse_model, embedding_identity, embedding_fingerprint,
     validate_dense_vector, validate_embedding_configuration,
@@ -47,7 +48,7 @@ def validate_release(client, manifest):
         raise ValueError('Embedding identity mismatch')
     if manifest.get('model_fingerprint') != embedding_fingerprint():
         raise ValueError('Embedding fingerprint mismatch')
-    info = client.get_collection(collection)
+    info = qdrant_call(client.get_collection, collection)
     vectors = info.config.params.vectors
     if (not isinstance(vectors, dict) or 'dense' not in vectors
             or vectors['dense'].size != EMBEDDING_DIMENSIONS
@@ -58,12 +59,12 @@ def validate_release(client, manifest):
     hashes = manifest['point_hashes']
     if (len(set(ids)) != len(ids) or set(ids) != set(hashes)
             or len(ids) != manifest['point_count']
-            or client.count(collection, exact=True).count != len(ids)):
+            or qdrant_call(client.count, collection, exact=True).count != len(ids)):
         raise ValueError('Exact collection count mismatch')
     documents = set()
     for start in range(0, len(ids), 64):
         expected = set(ids[start:start + 64])
-        points = client.retrieve(collection, list(expected), with_payload=True, with_vectors=True)
+        points = qdrant_call(client.retrieve, collection, list(expected), with_payload=True, with_vectors=True)
         if {str(point.id) for point in points} != expected:
             raise ValueError('Point integrity mismatch')
         for point in points:
@@ -88,25 +89,25 @@ def publish_release(client, manifest, alias):
     validate_release(client, manifest)
     if manifest['alias'] != alias:
         raise ValueError('Release alias mismatch')
-    aliases = {a.alias_name: a.collection_name for a in client.get_aliases().aliases}
+    aliases = {a.alias_name: a.collection_name for a in qdrant_call(client.get_aliases).aliases}
     previous = aliases.get(alias)
     collection = manifest['collection']
     if previous != collection and previous != manifest.get('previous_collection'):
         raise ValueError('Active alias changed since candidate build; refusing stale publication')
-    if previous is None and client.collection_exists(alias):
+    if previous is None and qdrant_call(client.collection_exists, alias):
         raise ValueError('Alias name is already a physical collection')
     changes = []
     if previous is not None:
         changes.append(models.DeleteAliasOperation(delete_alias=models.DeleteAlias(alias_name=alias)))
     changes.append(models.CreateAliasOperation(create_alias=models.CreateAlias(collection_name=collection, alias_name=alias)))
-    client.update_collection_aliases(changes)
+    qdrant_call(client.update_collection_aliases, changes)
     try:
         atomic_json(INGEST_MANIFEST_PATH, manifest)
     except Exception:
         rollback = [models.DeleteAliasOperation(delete_alias=models.DeleteAlias(alias_name=alias))]
         if previous:
             rollback.append(models.CreateAliasOperation(create_alias=models.CreateAlias(collection_name=previous, alias_name=alias)))
-        client.update_collection_aliases(rollback)
+        qdrant_call(client.update_collection_aliases, rollback)
         raise
 
 
@@ -114,8 +115,8 @@ def build_candidate(client, args):
     chunks = [c for c in read_jsonl(args.chunks) if c['metadata'].get('license_status') == 'APPROVED_FOR_RAG']
     if len({c['point_id'] for c in chunks}) != len(chunks):
         raise ValueError('Duplicate IDs')
-    aliases = {a.alias_name: a.collection_name for a in client.get_aliases().aliases}
-    if args.collection not in aliases and client.collection_exists(args.collection):
+    aliases = {a.alias_name: a.collection_name for a in qdrant_call(client.get_aliases).aliases}
+    if args.collection not in aliases and qdrant_call(client.collection_exists, args.collection):
         raise ValueError('Choose a new alias name, not an existing physical collection')
     previous = json.loads(INGEST_MANIFEST_PATH.read_text()) if INGEST_MANIFEST_PATH.exists() else {}
     source_hash = sha256_text(json.dumps([(c['point_id'], payload_for_chunk(c)) for c in chunks], sort_keys=True, ensure_ascii=False))
@@ -137,23 +138,26 @@ def build_candidate(client, args):
             records.append(None)
             missing.append((len(records) - 1, chunk, cached))
     if missing:
-        dense = encode_dense([c['embedding_text'] for _, c, _ in missing], args.batch_size)
+        with stage('dense_embeddings'):
+            dense = encode_dense([c['embedding_text'] for _, c, _ in missing], args.batch_size)
         for (index, _, path), vector in zip(missing, dense, strict=True):
             records[index] = vector
             atomic_json(path, {'dense': vector})
-    sparse = list(sparse_model().embed([c['embedding_text'] for c in chunks])) if chunks else []
+    with stage('sparse_embeddings'):
+        sparse = list(sparse_model().embed([c['embedding_text'] for c in chunks])) if chunks else []
     if len(sparse) != len(chunks):
         raise ValueError('Sparse embedding count mismatch')
     collection = f"{args.collection}_{datetime.now(timezone.utc):%Y%m%d%H%M%S}_{uuid.uuid4().hex[:8]}"
     release_path(collection)
-    client.create_collection(collection, vectors_config={'dense': models.VectorParams(size=EMBEDDING_DIMENSIONS, distance=models.Distance.COSINE)}, sparse_vectors_config={'bm25': models.SparseVectorParams(modifier=models.Modifier.IDF)})
+    qdrant_call(client.create_collection, collection, vectors_config={'dense': models.VectorParams(size=EMBEDDING_DIMENSIONS, distance=models.Distance.COSINE)}, sparse_vectors_config={'bm25': models.SparseVectorParams(modifier=models.Modifier.IDF)})
     try:
-        client.create_payload_index(collection, 'license_status', models.PayloadSchemaType.KEYWORD, wait=True)
+        qdrant_call(client.create_payload_index, collection, 'license_status', models.PayloadSchemaType.KEYWORD, wait=True)
         for start in range(0, len(chunks), args.upsert_batch_size):
             points = [models.PointStruct(id=c['point_id'], vector={
                 'dense': records[i], 'bm25': models.SparseVector(indices=sparse[i].indices.tolist(), values=sparse[i].values.tolist())},
                 payload=payload_for_chunk(c)) for i, c in enumerate(chunks[start:start + args.upsert_batch_size], start)]
-            client.upsert(collection, points, wait=True)
+            event('candidate_upsert_batch', offset=start, batchPoints=len(points), totalPoints=len(chunks))
+            qdrant_call(client.upsert, collection, points, wait=True)
         docs = read_jsonl(PARSED_DOCUMENTS_PATH)
         for doc in docs:
             if doc['metadata'].get('license_status') == 'APPROVED_FOR_RAG':
@@ -179,8 +183,12 @@ def build_candidate(client, args):
             publish_release(client, manifest, args.collection)
         return manifest
     except Exception:
-        if not any(a.collection_name == collection for a in client.get_aliases().aliases):
-            client.delete_collection(collection)
+        try:
+            if not any(a.collection_name == collection for a in qdrant_call(client.get_aliases).aliases):
+                qdrant_call(client.delete_collection, collection)
+        except Exception as cleanup_error:
+            # Preserve the original failure if Qdrant is still unavailable.
+            event('candidate_cleanup_failed', **error_details(cleanup_error))
         raise
 
 
@@ -192,7 +200,7 @@ def synchronize():
     parser.add_argument('--local-path', type=Path)
     parser.add_argument('--model', default=EMBEDDING_MODEL)
     parser.add_argument('--batch-size', type=int, default=16)
-    parser.add_argument('--upsert-batch-size', type=int, default=64)
+    parser.add_argument('--upsert-batch-size', type=int, default=16)
     parser.add_argument('--document-ids', help='Compatibility option: synchronize full corpus')
     parser.add_argument('--recreate', action='store_true', help='Build a candidate; retain old releases')
     mode = parser.add_mutually_exclusive_group()
