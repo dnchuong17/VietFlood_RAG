@@ -141,3 +141,7 @@ def document(document_id:str,version:int):
     snapshot=json.loads(path.read_text())
     snapshot['active']=client.count(RAG_ALIAS,count_filter=models.Filter(must=[models.FieldCondition(key='document_id',match=models.MatchValue(value=document_id)),models.FieldCondition(key='document_version',match=models.MatchValue(value=version))]),exact=True).count>0
     return snapshot
+
+# Inference extension inherits the service token dependency; citizen data never enters Qdrant.
+from incident_routes import router as incident_router
+app.include_router(incident_router)
