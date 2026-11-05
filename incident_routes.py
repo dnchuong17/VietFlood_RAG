@@ -1,8 +1,8 @@
 """Private inference routes. The parent FastAPI app enforces X-Rag-Token."""
 import logging
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field, ConfigDict
-from incident_processing import PIPELINE, extract, cosine, embedding_text
+from pydantic import BaseModel, Field, ConfigDict, field_validator
+from incident_processing import PIPELINE, extract, cosine, embedding_text, incident_embedding_fingerprint
 
 router = APIRouter(prefix='/incidents', tags=['incidents'])
 logger = logging.getLogger('vietflood.incidents')
@@ -16,6 +16,13 @@ class Analyze(BaseModel):
     addressLine: str = Field(default='', max_length=500)
     requestId: str = Field(default='', max_length=100)
 
+    @field_validator('description')
+    @classmethod
+    def require_description(cls, value):
+        if not value.strip():
+            raise ValueError('Description must not be blank')
+        return value  # Validate without stripping or rewriting the source.
+
 
 @router.post('/analyze')
 def analyze(body: Analyze):
@@ -24,7 +31,8 @@ def analyze(body: Analyze):
     try:
         result = extract(body.description)
         embedding = encode_dense([embedding_text(result)])[0]
-        return {**result, 'embedding': embedding, 'fingerprint': embedding_fingerprint(), 'pipeline': PIPELINE}
+        return {**result, 'embedding': embedding,
+                'fingerprint': incident_embedding_fingerprint(embedding_fingerprint()), 'pipeline': PIPELINE}
     except Exception as exc:
         logger.warning('incident_analysis_failed', extra={'requestId': body.requestId, 'errorType': type(exc).__name__})
         raise HTTPException(503, 'Incident analysis unavailable') from None
